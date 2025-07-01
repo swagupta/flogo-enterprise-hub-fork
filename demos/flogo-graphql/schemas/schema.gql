@@ -1,0 +1,77 @@
+type Device {
+  # Basic device information
+  id: ID!
+  manufacturer: String
+  model: String
+  year: Int
+  picture: String
+  
+  # Device type and screen
+  deviceType: String
+  touchScreen: Boolean
+  
+  # Operating system
+  os: String
+  osName: String
+  osVersion: String
+  
+  # WAP and browser information
+  wapStackVersion: String
+  wapBrowserVersion: String
+  uaProf: String
+  browserType: String
+  
+  # Network connectivity
+  frequency: String
+  edge: Boolean
+  umts: Boolean
+  hsdpa: Boolean
+  hsupa: Boolean
+  hspa: Boolean
+  dcHspa: Boolean
+  lte: Boolean
+  lteA: Boolean
+  volte: Boolean
+  wifiCalling: Boolean
+  
+  # Features
+  supportedRingtones: [String]
+  supportedVideoFormat: [String]
+  hasCamera: Boolean
+  hasVideoCall: Boolean
+  hasVoiceVoip: Boolean
+  hasBluetooth: Boolean
+  hasWirelessLan: Boolean
+  hasGps: Boolean
+  hasJavaMidp: Boolean
+  hasSms: Boolean
+}
+
+type Query {
+  # Get a device by ID
+  device(id: ID!): Device
+  
+  # Get all devices
+  devices: [Device]
+  
+  # Search devices by various criteria
+  searchDevices(
+    manufacturer: String
+    model: String
+    year: Int
+    deviceType: String
+    hasCamera: Boolean
+    hasTouchScreen: Boolean
+    osName: String
+  ): [Device]
+  
+  # Get devices by manufacturer
+  devicesByManufacturer(manufacturer: String!): [Device]
+  
+  # Get devices by network capability
+  devicesByNetworkCapability(
+    lte: Boolean
+    volte: Boolean
+    wifiCalling: Boolean
+  ): [Device]
+}

@@ -1,0 +1,23 @@
+{
+  "suites": {},
+  "tests": {
+    "Resolver_DevicesByManufacturer:TestReturnOnlyApple": {
+      "name": "TestReturnOnlyApple",
+      "flowId": "flow:Resolver_DevicesByManufacturer",
+      "flowName": "Resolver_DevicesByManufacturer",
+      "disabled": false
+    },
+    "fetchFromMongoDB:TestFetchFromMongo": {
+      "name": "TestFetchFromMongo",
+      "flowId": "flow:fetchFromMongoDB",
+      "flowName": "fetchFromMongoDB",
+      "disabled": false
+    }
+  },
+  "type": "flogo:unittest",
+  "model": "1.1.1",
+  "app": {
+    "name": "flogo-graphql",
+    "version": "1.0.0"
+  }
+}

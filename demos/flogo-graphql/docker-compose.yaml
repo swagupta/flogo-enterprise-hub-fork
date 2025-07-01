@@ -1,0 +1,19 @@
+services:
+  flogo-graphql:
+    image: flogo-graphql:latest
+    container_name: flogo-graphql
+    hostname: flogo-graphql
+    env_file:
+      - .env
+    environment:
+      FLOGO_LOG_LEVEL: info
+      FLOGO_APP_PROPS_ENV: auto
+    ports:
+      - "4000:4000"
+    networks:
+      - mongo-network
+
+
+networks:
+  mongo-network:
+    external: true
