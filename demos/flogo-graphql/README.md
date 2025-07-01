@@ -10,10 +10,14 @@
 
 ## Pre-requisites
 
-Make file uses calls to flogo-cli tool. Make sure it's available on your path. You'll need to setup your context first. E.g.
+Make file uses calls to flogobuild tool. The flogobuild tool can be downloaded from edelivery.tibco.com under either TIBCO Flogo Enterprise or TIBCO Integration for TIBCO Platform.
+
+| Make sure flogobuild is available on your environment path. 
+
+You'll need to setup your context first. E.g.
 
 ```bash
-flogo-cli create-context -n latest -v /home/mmussett/flogo-vscode-linux-x64-1.3.0-1008.vsix --set-default
+flogobuild create-context -n latest -v /home/mmussett/flogo-vscode-linux-x64-1.3.0-1008.vsix --set-default
 ```
 
 Whatever you decide to call your context, it needs to be the same as set in the FLOGO_CONTEXT variable in the Makefile, thus..
