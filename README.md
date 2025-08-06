@@ -31,8 +31,8 @@ This repository contains docs, samples, and tools to help you build Flogo® appl
 Try out the Flogo application samples that help you build and deploy Flogo® applications for Visual Studio Code and Tibco Control Plane.  
 
 - **Samples for [TIBCO Flogo® Extension for Visual Studio Code](https://github.com/TIBCOSoftware/flogo-enterprise-hub/tree/master/samples/VSCode_Extension)**
-    - **Model Context Protocol(MCP)**
-         - [Customer 360](./samples/Model_Context_Protocol(MCP)/Customomer360/README.md) : This sample demonstrates how to use FLOGO MCP Connector and expose your customers, products, sales data as MCP server tools and query using natural language from AI Agent.
+    - **Model Context Protocol(MCP)**<img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/7eb4d12a-e825-4356-993f-91659da1d57a" />
+         - [Customer 360](https://github.com/TIBCOSoftware/flogo-enterprise-hub/tree/master/samples/Model_Context_Protocol(MCP)/Customer360) : This sample demonstrates how to use FLOGO MCP Connector and expose your customers, products, sales data as MCP server tools and query using natural language from AI Agent.
     - **API Development**
        - REST 
            - [Rest Basic](https://github.com/TIBCOSoftware/flogo-enterprise-hub/tree/master/samples/VSCode_Extension/API-Development/REST/Basic) :  This sample demonstrates some of the REST features present in the FLOGO ReceiveHTTPMessage trigger and InvokeRestService activity
