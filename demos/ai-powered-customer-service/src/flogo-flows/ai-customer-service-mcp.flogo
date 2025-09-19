@@ -1,0 +1,1540 @@
+{
+  "imports": [
+    "github.com/project-flogo/flow",
+    "github.com/project-flogo/contrib/activity/noop",
+    "github.com/tibco/flogo-general/src/app/General/activity/rest",
+    "github.com/tibco/flogo-general/src/app/General/activity/mapper",
+    "github.com/tibco/flogo-general/src/app/General/activity/log",
+    "github.com/project-flogo/contrib/activity/actreturn",
+    "github.com/project-flogo/contrib/activity/error",
+    "github.com/tibco/flogo-general/src/app/General/activity/sendmail",
+    "github.com/mpandav-tibco/flogo-custom-extensions/activity/templateengine",
+    "github.com/tibco/flogo-mcp/src/app/MCP/trigger/mcpserver",
+    "github.com/project-flogo/contrib/function/string",
+    "github.com/project-flogo/contrib/function/array",
+    "github.com/project-flogo/contrib/function/coerce",
+    "git.tibco.com/git/product/ipaas/wi-contrib.git/function/boolean"
+  ],
+  "name": "ai-customer-service-mcp",
+  "description": "",
+  "version": "1.0.0",
+  "type": "flogo:app",
+  "appModel": "1.1.1",
+  "tags": [],
+  "triggers": [
+    {
+      "ref": "#mcpserver",
+      "name": "flogo-mcp-mcpsever",
+      "description": "Flogo MCP server for Agentic AI",
+      "settings": {
+        "serverName": "ai-customer-service",
+        "serverVersion": "1.0.0",
+        "serverType": "HTTP",
+        "serverPort": "=$property[\"mcp.serverPort\"]"
+      },
+      "id": "ai_customer_service",
+      "handlers": [
+        {
+          "description": "Aggregates customer data from CRM, Orders, and Support systems",
+          "settings": {
+            "handlerType": "Tool",
+            "handlerName": "=$property[\"mcp.customer_360.primitiveName\"]",
+            "handlerDescription": "=$property[\"mcp.customer_360.primitiveDescription\"]",
+            "resourceUri": ""
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:Customer_Profile"
+            },
+            "input": {
+              "arguments": "=$.arguments"
+            },
+            "output": {
+              "toolResult": "=$.toolResult"
+            }
+          },
+          "schemas": {
+            "reply": {
+              "toolResult": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    }\r\n  }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    }\r\n  }\r\n}"
+              },
+              "promptResult": {
+                "type": "json",
+                "value": "{\r\n  \"type\": \"object\",\r\n  \"properties\": {\r\n    \"description\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"messages\": {\r\n      \"type\": \"array\",\r\n      \"items\": \r\n        {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"role\": {\r\n              \"type\": \"string\"\r\n            },\r\n            \"content\": {\r\n              \"type\": \"string\"\r\n            }\r\n          },\r\n          \"required\": [\r\n            \"role\",\r\n            \"content\"\r\n          ]\r\n        }\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n  }\r\n}",
+                "fe_metadata": "{\r\n  \"type\": \"object\",\r\n  \"properties\": {\r\n    \"description\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"messages\": {\r\n      \"type\": \"array\",\r\n      \"items\": \r\n        {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"role\": {\r\n              \"type\": \"string\"\r\n            },\r\n            \"content\": {\r\n              \"type\": \"string\"\r\n            }\r\n          },\r\n          \"required\": [\r\n            \"role\",\r\n            \"content\"\r\n          ]\r\n        }\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n  }\r\n}"
+              },
+              "resourceResult": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n    \"properties\": {\r\n        \"textResourceContents\": {\r\n            \"type\": \"array\",\r\n            \"items\": {\r\n                \"type\": \"object\",\r\n                \"properties\": {\r\n                    \"uri\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"text\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"mimeType\": {\r\n                        \"type\": \"string\"\r\n                    }\r\n                },\r\n                \"required\": [\r\n                    \"text\",\r\n                    \"mimeType\"\r\n                ]\r\n            }\r\n        },\r\n        \"success\": {\r\n            \"type\": \"boolean\"\r\n        },\r\n        \"error\": {\r\n            \"type\": \"string\"\r\n        }\r\n    }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n    \"properties\": {\r\n        \"textResourceContents\": {\r\n            \"type\": \"array\",\r\n            \"items\": {\r\n                \"type\": \"object\",\r\n                \"properties\": {\r\n                    \"uri\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"text\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"mimeType\": {\r\n                        \"type\": \"string\"\r\n                    }\r\n                },\r\n                \"required\": [\r\n                    \"text\",\r\n                    \"mimeType\"\r\n                ]\r\n            }\r\n        },\r\n        \"success\": {\r\n            \"type\": \"boolean\"\r\n        },\r\n        \"error\": {\r\n            \"type\": \"string\"\r\n        }\r\n    }\r\n}"
+              }
+            },
+            "output": {
+              "arguments": {
+                "type": "json",
+                "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"customerId\":{\"type\":\"string\"}}}",
+                "fe_metadata": "{\n    \"customerId\":\"\"\n}"
+              }
+            }
+          },
+          "name": "Customer_Profile"
+        },
+        {
+          "description": "Tool to expedite customer orders with notification",
+          "settings": {
+            "handlerType": "Tool",
+            "handlerName": "=$property[\"mcp.expediate_order.primitiveName\"]",
+            "handlerDescription": "=$property[\"mcp.expediate_order.primitiveDescription\"]",
+            "resourceUri": ""
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:Expedite_Orders"
+            },
+            "input": {
+              "arguments": "=$.arguments"
+            },
+            "output": {
+              "toolResult": "=$.toolResult"
+            }
+          },
+          "schemas": {
+            "reply": {
+              "toolResult": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    }\r\n  }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    }\r\n  }\r\n}"
+              },
+              "promptResult": {
+                "type": "json",
+                "value": "{\r\n  \"type\": \"object\",\r\n  \"properties\": {\r\n    \"description\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"messages\": {\r\n      \"type\": \"array\",\r\n      \"items\": \r\n        {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"role\": {\r\n              \"type\": \"string\"\r\n            },\r\n            \"content\": {\r\n              \"type\": \"string\"\r\n            }\r\n          },\r\n          \"required\": [\r\n            \"role\",\r\n            \"content\"\r\n          ]\r\n        }\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n  }\r\n}",
+                "fe_metadata": "{\r\n  \"type\": \"object\",\r\n  \"properties\": {\r\n    \"description\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"messages\": {\r\n      \"type\": \"array\",\r\n      \"items\": \r\n        {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"role\": {\r\n              \"type\": \"string\"\r\n            },\r\n            \"content\": {\r\n              \"type\": \"string\"\r\n            }\r\n          },\r\n          \"required\": [\r\n            \"role\",\r\n            \"content\"\r\n          ]\r\n        }\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n  }\r\n}"
+              },
+              "resourceResult": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n    \"properties\": {\r\n        \"textResourceContents\": {\r\n            \"type\": \"array\",\r\n            \"items\": {\r\n                \"type\": \"object\",\r\n                \"properties\": {\r\n                    \"uri\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"text\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"mimeType\": {\r\n                        \"type\": \"string\"\r\n                    }\r\n                },\r\n                \"required\": [\r\n                    \"text\",\r\n                    \"mimeType\"\r\n                ]\r\n            }\r\n        },\r\n        \"success\": {\r\n            \"type\": \"boolean\"\r\n        },\r\n        \"error\": {\r\n            \"type\": \"string\"\r\n        }\r\n    }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n    \"properties\": {\r\n        \"textResourceContents\": {\r\n            \"type\": \"array\",\r\n            \"items\": {\r\n                \"type\": \"object\",\r\n                \"properties\": {\r\n                    \"uri\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"text\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"mimeType\": {\r\n                        \"type\": \"string\"\r\n                    }\r\n                },\r\n                \"required\": [\r\n                    \"text\",\r\n                    \"mimeType\"\r\n                ]\r\n            }\r\n        },\r\n        \"success\": {\r\n            \"type\": \"boolean\"\r\n        },\r\n        \"error\": {\r\n            \"type\": \"string\"\r\n        }\r\n    }\r\n}"
+              }
+            },
+            "output": {
+              "arguments": {
+                "type": "json",
+                "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"customerId\":{\"type\":\"string\"},\"orderId\":{\"type\":\"string\"},\"reason\":{\"type\":\"string\"}}}",
+                "fe_metadata": "{\n    \"customerId\":\"\", \n    \"orderId\":\"\", \n    \"reason\":\"\"\n}"
+              }
+            }
+          },
+          "name": "Expedite_Orders"
+        },
+        {
+          "description": "Generate personalized email content based on customer context",
+          "settings": {
+            "handlerType": "Prompt",
+            "handlerName": "=$property[\"mcp.generate_email.primitiveName\"]",
+            "handlerDescription": "=$property[\"mcp.generate_email.primitiveDescription\"]",
+            "resourceUri": ""
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:Send_Customer_Notification"
+            },
+            "input": {
+              "arguments": "=$.arguments"
+            },
+            "output": {
+              "promptResult": "=$.promptResult"
+            }
+          },
+          "schemas": {
+            "reply": {
+              "toolResult": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    }\r\n  }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    }\r\n  }\r\n}"
+              },
+              "promptResult": {
+                "type": "json",
+                "value": "{\r\n  \"type\": \"object\",\r\n  \"properties\": {\r\n    \"description\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"messages\": {\r\n      \"type\": \"array\",\r\n      \"items\": \r\n        {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"role\": {\r\n              \"type\": \"string\"\r\n            },\r\n            \"content\": {\r\n              \"type\": \"string\"\r\n            }\r\n          },\r\n          \"required\": [\r\n            \"role\",\r\n            \"content\"\r\n          ]\r\n        }\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n  }\r\n}",
+                "fe_metadata": "{\r\n  \"type\": \"object\",\r\n  \"properties\": {\r\n    \"description\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"messages\": {\r\n      \"type\": \"array\",\r\n      \"items\": \r\n        {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"role\": {\r\n              \"type\": \"string\"\r\n            },\r\n            \"content\": {\r\n              \"type\": \"string\"\r\n            }\r\n          },\r\n          \"required\": [\r\n            \"role\",\r\n            \"content\"\r\n          ]\r\n        }\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n  }\r\n}"
+              },
+              "resourceResult": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n    \"properties\": {\r\n        \"textResourceContents\": {\r\n            \"type\": \"array\",\r\n            \"items\": {\r\n                \"type\": \"object\",\r\n                \"properties\": {\r\n                    \"uri\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"text\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"mimeType\": {\r\n                        \"type\": \"string\"\r\n                    }\r\n                },\r\n                \"required\": [\r\n                    \"text\",\r\n                    \"mimeType\"\r\n                ]\r\n            }\r\n        },\r\n        \"success\": {\r\n            \"type\": \"boolean\"\r\n        },\r\n        \"error\": {\r\n            \"type\": \"string\"\r\n        }\r\n    }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n    \"properties\": {\r\n        \"textResourceContents\": {\r\n            \"type\": \"array\",\r\n            \"items\": {\r\n                \"type\": \"object\",\r\n                \"properties\": {\r\n                    \"uri\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"text\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"mimeType\": {\r\n                        \"type\": \"string\"\r\n                    }\r\n                },\r\n                \"required\": [\r\n                    \"text\",\r\n                    \"mimeType\"\r\n                ]\r\n            }\r\n        },\r\n        \"success\": {\r\n            \"type\": \"boolean\"\r\n        },\r\n        \"error\": {\r\n            \"type\": \"string\"\r\n        }\r\n    }\r\n}"
+              }
+            },
+            "output": {
+              "arguments": {
+                "type": "json",
+                "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"emailType\":{\"type\":\"string\"},\"customerId\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"tier\":{\"type\":\"string\"},\"totalSpent\":{\"type\":\"string\"},\"email\":{\"type\":\"string\"},\"orderId\":{\"type\":\"string\"},\"issueType\":{\"type\":\"string\"},\"urgency\":{\"type\":\"string\"},\"orderValue\":{\"type\":\"string\"},\"delayReason\":{\"type\":\"string\"},\"agentId\":{\"type\":\"string\"},\"sessionId\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}",
+                "fe_metadata": "{\n    \"emailType\": \"apology\",\n    \"customerId\": \"12345\",\n    \"name\": \"John Johnson\",\n    \"tier\": \"Platinum\",\n    \"totalSpent\": \"45000\",\n    \"email\": \"john@email.com\",\n    \"orderId\": \"ORD-789\",\n    \"issueType\": \"delay\",\n    \"urgency\": \"high\",\n    \"orderValue\": \"1299.99\",\n    \"delayReason\": \"Supply chain disruption\",\n    \"agentId\": \"ai-agent-001\",\n    \"sessionId\": \"sess-abc123\",\n    \"timestamp\": \"2024-01-25T10:30:00Z\"\n}"
+              }
+            }
+          },
+          "name": "Send_Customer_Notification"
+        },
+        {
+          "description": "Send Personalised Emails to Customer ",
+          "settings": {
+            "handlerType": "Tool",
+            "handlerName": "send_email",
+            "handlerDescription": "Send Personalised email to Customers.",
+            "resourceUri": ""
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:Send_Email"
+            },
+            "input": {
+              "arguments": "=$.arguments"
+            },
+            "output": {
+              "toolResult": "=$.toolResult"
+            }
+          },
+          "schemas": {
+            "reply": {
+              "toolResult": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    }\r\n  }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n  \"properties\": {\r\n    \"data\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    }\r\n  }\r\n}"
+              },
+              "promptResult": {
+                "type": "json",
+                "value": "{\r\n  \"type\": \"object\",\r\n  \"properties\": {\r\n    \"description\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"messages\": {\r\n      \"type\": \"array\",\r\n      \"items\": \r\n        {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"role\": {\r\n              \"type\": \"string\"\r\n            },\r\n            \"content\": {\r\n              \"type\": \"string\"\r\n            }\r\n          },\r\n          \"required\": [\r\n            \"role\",\r\n            \"content\"\r\n          ]\r\n        }\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n  }\r\n}",
+                "fe_metadata": "{\r\n  \"type\": \"object\",\r\n  \"properties\": {\r\n    \"description\": {\r\n      \"type\": \"string\"\r\n    },\r\n    \"messages\": {\r\n      \"type\": \"array\",\r\n      \"items\": \r\n        {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"role\": {\r\n              \"type\": \"string\"\r\n            },\r\n            \"content\": {\r\n              \"type\": \"string\"\r\n            }\r\n          },\r\n          \"required\": [\r\n            \"role\",\r\n            \"content\"\r\n          ]\r\n        }\r\n    },\r\n    \"success\": {\r\n      \"type\": \"boolean\"\r\n    },\r\n    \"error\": {\r\n      \"type\": \"string\"\r\n    }\r\n  }\r\n}"
+              },
+              "resourceResult": {
+                "type": "json",
+                "value": "{\r\n    \"type\": \"object\",\r\n    \"properties\": {\r\n        \"textResourceContents\": {\r\n            \"type\": \"array\",\r\n            \"items\": {\r\n                \"type\": \"object\",\r\n                \"properties\": {\r\n                    \"uri\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"text\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"mimeType\": {\r\n                        \"type\": \"string\"\r\n                    }\r\n                },\r\n                \"required\": [\r\n                    \"text\",\r\n                    \"mimeType\"\r\n                ]\r\n            }\r\n        },\r\n        \"success\": {\r\n            \"type\": \"boolean\"\r\n        },\r\n        \"error\": {\r\n            \"type\": \"string\"\r\n        }\r\n    }\r\n}",
+                "fe_metadata": "{\r\n    \"type\": \"object\",\r\n    \"properties\": {\r\n        \"textResourceContents\": {\r\n            \"type\": \"array\",\r\n            \"items\": {\r\n                \"type\": \"object\",\r\n                \"properties\": {\r\n                    \"uri\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"text\": {\r\n                        \"type\": \"string\"\r\n                    },\r\n                    \"mimeType\": {\r\n                        \"type\": \"string\"\r\n                    }\r\n                },\r\n                \"required\": [\r\n                    \"text\",\r\n                    \"mimeType\"\r\n                ]\r\n            }\r\n        },\r\n        \"success\": {\r\n            \"type\": \"boolean\"\r\n        },\r\n        \"error\": {\r\n            \"type\": \"string\"\r\n        }\r\n    }\r\n}"
+              }
+            },
+            "output": {
+              "arguments": {
+                "type": "json",
+                "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"email\":{\"type\":\"string\"},\"subject\":{\"type\":\"string\"},\"mailContent\":{\"type\":\"string\"}}}",
+                "fe_metadata": "{\n    \"email\":\"\",\n    \"subject\":\"\",\n    \"mailContent\":\"\"\n}"
+              }
+            }
+          },
+          "name": "Send_Email"
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:Customer_Profile",
+      "data": {
+        "name": "Customer Profile",
+        "description": "Aggregates customer data from CRM, Orders, and Support systems",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "Get_Customer_Profile",
+            "type": "label",
+            "label": "StartActivity to Get_Customer_Profile"
+          },
+          {
+            "id": 2,
+            "from": "Get_Customer_Profile",
+            "to": "Get_Customer_Orders",
+            "type": "label",
+            "label": "success"
+          },
+          {
+            "id": 3,
+            "from": "Get_Customer_Orders",
+            "to": "Get_Support_History",
+            "type": "label",
+            "label": "success1"
+          },
+          {
+            "id": 4,
+            "from": "Get_Support_History",
+            "to": "Aggregate_Data",
+            "type": "label",
+            "label": "Get_Support_History to Mapper"
+          },
+          {
+            "id": 5,
+            "from": "Aggregate_Data",
+            "to": "Log_Data_Aggregation",
+            "type": "label",
+            "label": "Mapper to Log_Data_Aggregation"
+          },
+          {
+            "id": 6,
+            "from": "Log_Data_Aggregation",
+            "to": "SUCCESS",
+            "type": "label",
+            "label": "Log_Data_Aggregation to Return"
+          },
+          {
+            "id": 7,
+            "from": "Get_Support_History",
+            "to": "ThrowError",
+            "type": "error",
+            "label": "Get_Support_History to ThrowError"
+          },
+          {
+            "id": 8,
+            "from": "Get_Customer_Orders",
+            "to": "ThrowError",
+            "type": "error",
+            "label": "Get_Customer_Orders to ThrowError"
+          },
+          {
+            "id": 9,
+            "from": "Get_Customer_Profile",
+            "to": "ThrowError",
+            "type": "error",
+            "label": "Get_Customer_Profile to ThrowError"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "Get_Customer_Profile",
+            "name": "Get_Customer_Profile",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "GET",
+                "Uri": "=$property[\"systems.CRM_APIs.Get_Customer_Profile\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableSSLVerification": false,
+                "disableKeepAlives": false,
+                "followRedirects": true,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "pathParams": {
+                  "mapping": {
+                    "customerId": "=string.trim($flow.arguments.customerId, '[\\\"]\\\\')"
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "throwError": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "pathParams": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"customerId\":{\"type\":\"string\"}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"customerId\",\"type\":\"string\"}]"
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Authorization\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}, {\"parameterName\":\"Authorization\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  },
+                  "dynamicRequestHeaders": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Header\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"required\":[\"name\",\"value\"]}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Header\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"required\":[\"name\",\"value\"]}}}}"
+                  }
+                },
+                "output": {
+                  "responseBody": "schema://customer_profile",
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Get_Customer_Orders",
+            "name": "Get_Customer_Orders",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "GET",
+                "Uri": "=$property[\"systems.CRM_APIs.Get_Customer_Orders\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableSSLVerification": false,
+                "disableKeepAlives": false,
+                "followRedirects": true,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "pathParams": {
+                  "mapping": {
+                    "customerId": "=string.trim($flow.arguments.customerId, '[\\\"]\\\\')"
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "throwError": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "pathParams": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"customerId\":{\"type\":\"string\"}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"customerId\",\"type\":\"string\"}]"
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Authorization\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}, {\"parameterName\":\"Authorization\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  },
+                  "dynamicRequestHeaders": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Header\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"required\":[\"name\",\"value\"]}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Header\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"required\":[\"name\",\"value\"]}}}}"
+                  }
+                },
+                "output": {
+                  "responseBody": "schema://customer_orders",
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Get_Support_History",
+            "name": "Get_Support_History",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "GET",
+                "Uri": "=$property[\"systems.CRM_APIs.Get_Support_History\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableSSLVerification": false,
+                "disableKeepAlives": false,
+                "followRedirects": true,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "pathParams": {
+                  "mapping": {
+                    "customerId": "=string.trim($flow.arguments.customerId, '[\\\"]\\\\')"
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "throwError": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "pathParams": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"customerId\":{\"type\":\"string\"}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"customerId\",\"type\":\"string\"}]"
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Authorization\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}, {\"parameterName\":\"Authorization\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  },
+                  "dynamicRequestHeaders": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Header\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"required\":[\"name\",\"value\"]}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Header\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"required\":[\"name\",\"value\"]}}}}"
+                  }
+                },
+                "output": {
+                  "responseBody": "schema://support_tickets",
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Aggregate_Data",
+            "name": "Aggregate_Data",
+            "description": "Mapper Activity",
+            "activity": {
+              "ref": "#mapper",
+              "input": {
+                "input": {
+                  "mapping": {
+                    "customerData": "=$activity[Get_Customer_Profile].responseBody.data",
+                    "orderDetails": {
+                      "@foreach($activity[Get_Customer_Orders].responseBody.data,data)": {
+                        "=": "$loop"
+                      }
+                    },
+                    "supportTicket": {
+                      "@foreach($activity[Get_Support_History].responseBody.data,data)": {
+                        "=": "$loop"
+                      }
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": "schema://aggregated_data"
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"customerData\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"customerId\": {\n          \"type\": \"string\"\n        },\n        \"profile\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"firstName\": {\n              \"type\": \"string\"\n            },\n            \"lastName\": {\n              \"type\": \"string\"\n            },\n            \"email\": {\n              \"type\": \"string\"\n            },\n            \"phone\": {\n              \"type\": \"string\"\n            },\n            \"memberSince\": {\n              \"type\": \"string\"\n            },\n            \"tier\": {\n              \"type\": \"string\"\n            },\n            \"preferredContact\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"address\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"street\": {\n              \"type\": \"string\"\n            },\n            \"city\": {\n              \"type\": \"string\"\n            },\n            \"state\": {\n              \"type\": \"string\"\n            },\n            \"zipCode\": {\n              \"type\": \"string\"\n            },\n            \"country\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"preferences\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"emailNotifications\": {\n              \"type\": \"boolean\"\n            },\n            \"smsNotifications\": {\n              \"type\": \"boolean\"\n            },\n            \"language\": {\n              \"type\": \"string\"\n            },\n            \"timezone\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    },\n    \"orderDetails\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"orderId\": {\n            \"type\": \"string\"\n          },\n          \"customerId\": {\n            \"type\": \"string\"\n          },\n          \"orderDate\": {\n            \"type\": \"string\"\n          },\n          \"status\": {\n            \"type\": \"string\"\n          },\n          \"items\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"productId\": {\n                  \"type\": \"string\"\n                },\n                \"name\": {\n                  \"type\": \"string\"\n                },\n                \"quantity\": {\n                  \"type\": \"number\"\n                },\n                \"price\": {\n                  \"type\": \"number\"\n                }\n              },\n              \"required\": [\n                \"productId\",\n                \"name\",\n                \"quantity\",\n                \"price\"\n              ]\n            }\n          },\n          \"shipping\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"method\": {\n                \"type\": \"string\"\n              },\n              \"trackingNumber\": {\n                \"type\": \"string\"\n              },\n              \"estimatedDelivery\": {\n                \"type\": \"string\"\n              },\n              \"carrier\": {\n                \"type\": \"string\"\n              }\n            }\n          },\n          \"payment\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"method\": {\n                \"type\": \"string\"\n              },\n              \"last4\": {\n                \"type\": \"string\"\n              },\n              \"amount\": {\n                \"type\": \"number\"\n              },\n              \"currency\": {\n                \"type\": \"string\"\n              }\n            }\n          },\n          \"lastUpdated\": {\n            \"type\": \"string\"\n          },\n          \"statusReason\": {\n            \"type\": \"string\"\n          }\n        }\n      }\n    },\n    \"supportTicket\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"ticketId\": {\n            \"type\": \"string\"\n          },\n          \"customerId\": {\n            \"type\": \"string\"\n          },\n          \"orderId\": {\n            \"type\": \"string\"\n          },\n          \"subject\": {\n            \"type\": \"string\"\n          },\n          \"description\": {\n            \"type\": \"string\"\n          },\n          \"priority\": {\n            \"type\": \"string\"\n          },\n          \"status\": {\n            \"type\": \"string\"\n          },\n          \"createdDate\": {\n            \"type\": \"string\"\n          },\n          \"category\": {\n            \"type\": \"string\"\n          },\n          \"assignedAgent\": {\n            \"type\": \"string\"\n          },\n          \"tags\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  }\n}",
+                    "fe_metadata": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"customerData\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"customerId\": {\n          \"type\": \"string\"\n        },\n        \"profile\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"firstName\": {\n              \"type\": \"string\"\n            },\n            \"lastName\": {\n              \"type\": \"string\"\n            },\n            \"email\": {\n              \"type\": \"string\"\n            },\n            \"phone\": {\n              \"type\": \"string\"\n            },\n            \"memberSince\": {\n              \"type\": \"string\"\n            },\n            \"tier\": {\n              \"type\": \"string\"\n            },\n            \"preferredContact\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"address\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"street\": {\n              \"type\": \"string\"\n            },\n            \"city\": {\n              \"type\": \"string\"\n            },\n            \"state\": {\n              \"type\": \"string\"\n            },\n            \"zipCode\": {\n              \"type\": \"string\"\n            },\n            \"country\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"preferences\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"emailNotifications\": {\n              \"type\": \"boolean\"\n            },\n            \"smsNotifications\": {\n              \"type\": \"boolean\"\n            },\n            \"language\": {\n              \"type\": \"string\"\n            },\n            \"timezone\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    },\n    \"orderDetails\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"orderId\": {\n            \"type\": \"string\"\n          },\n          \"customerId\": {\n            \"type\": \"string\"\n          },\n          \"orderDate\": {\n            \"type\": \"string\"\n          },\n          \"status\": {\n            \"type\": \"string\"\n          },\n          \"items\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"productId\": {\n                  \"type\": \"string\"\n                },\n                \"name\": {\n                  \"type\": \"string\"\n                },\n                \"quantity\": {\n                  \"type\": \"number\"\n                },\n                \"price\": {\n                  \"type\": \"number\"\n                }\n              },\n              \"required\": [\n                \"productId\",\n                \"name\",\n                \"quantity\",\n                \"price\"\n              ]\n            }\n          },\n          \"shipping\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"method\": {\n                \"type\": \"string\"\n              },\n              \"trackingNumber\": {\n                \"type\": \"string\"\n              },\n              \"estimatedDelivery\": {\n                \"type\": \"string\"\n              },\n              \"carrier\": {\n                \"type\": \"string\"\n              }\n            }\n          },\n          \"payment\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"method\": {\n                \"type\": \"string\"\n              },\n              \"last4\": {\n                \"type\": \"string\"\n              },\n              \"amount\": {\n                \"type\": \"number\"\n              },\n              \"currency\": {\n                \"type\": \"string\"\n              }\n            }\n          },\n          \"lastUpdated\": {\n            \"type\": \"string\"\n          },\n          \"statusReason\": {\n            \"type\": \"string\"\n          }\n        }\n      }\n    },\n    \"supportTicket\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"ticketId\": {\n            \"type\": \"string\"\n          },\n          \"customerId\": {\n            \"type\": \"string\"\n          },\n          \"orderId\": {\n            \"type\": \"string\"\n          },\n          \"subject\": {\n            \"type\": \"string\"\n          },\n          \"description\": {\n            \"type\": \"string\"\n          },\n          \"priority\": {\n            \"type\": \"string\"\n          },\n          \"status\": {\n            \"type\": \"string\"\n          },\n          \"createdDate\": {\n            \"type\": \"string\"\n          },\n          \"category\": {\n            \"type\": \"string\"\n          },\n          \"assignedAgent\": {\n            \"type\": \"string\"\n          },\n          \"tags\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  }\n}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Log_Data_Aggregation",
+            "name": "Log_Data_Aggregation",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\" ##### Complete Customer Profile : \", coerce.toString($activity[Aggregate_Data]))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "SUCCESS",
+            "name": "SUCCESS",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "toolResult": {
+                    "mapping": {
+                      "success": "=boolean.true()",
+                      "data": "=coerce.toString($activity[Aggregate_Data].output)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "ThrowError",
+            "name": "ThrowError",
+            "description": "Throws an Error",
+            "activity": {
+              "ref": "#error",
+              "input": {
+                "message": "ERROR IN OPERATION",
+                "data": {
+                  "@conditional": [
+                    {
+                      "$activity[Get_Customer_Profile].statusCode != 200": "=$error[Get_Customer_Profile]"
+                    },
+                    {
+                      "$activity[Get_Customer_Orders].statusCode != 200": "=$error[Get_Customer_Orders]"
+                    },
+                    {
+                      "@otherwise": "=$error[Get_Support_History]"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiR2V0X0N1c3RvbWVyX1Byb2ZpbGUiOnsieCI6MjY0LCJ5Ijo5NX0sIkdldF9DdXN0b21lcl9PcmRlcnMiOnsieCI6MjcwLCJ5IjoyMjh9LCJHZXRfU3VwcG9ydF9IaXN0b3J5Ijp7IngiOjI3MSwieSI6MzM0fSwiQWdncmVnYXRlX0RhdGEiOnsieCI6NTIxLCJ5IjozMzR9LCJMb2dfRGF0YV9BZ2dyZWdhdGlvbiI6eyJ4Ijo3NTMsInkiOjMzNX0sIlNVQ0NFU1MiOnsieCI6OTc0LCJ5IjozMzN9LCJUaHJvd0Vycm9yIjp7IngiOjUxMSwieSI6OTB9fQ==",
+        "errorHandler": {
+          "tasks": [
+            {
+              "id": "LogMessage",
+              "name": "LogMessage",
+              "description": "Simple Log Message Activity",
+              "activity": {
+                "ref": "#log",
+                "input": {
+                  "Log Level": "INFO",
+                  "flowInfo": false,
+                  "message": "=string.concat(\" ##### ERROR : \", $error.activity,  \"  \", $error.message, \"  \", coerce.toString($error.data))",
+                  "logLevel": ""
+                }
+              }
+            },
+            {
+              "id": "ERROR",
+              "name": "ERROR",
+              "description": "Simple Return Activity",
+              "activity": {
+                "ref": "#actreturn",
+                "settings": {
+                  "mappings": {
+                    "toolResult": {
+                      "mapping": {
+                        "error": "=coerce.toString($error.data)",
+                        "data": "=$error.message",
+                        "success": "=boolean.false()"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "links": [
+            {
+              "id": 10,
+              "from": "LogMessage",
+              "to": "ERROR",
+              "type": "label",
+              "label": "LogMessage to Return1"
+            }
+          ],
+          "fe_metadata": "eyJMb2dNZXNzYWdlIjp7IngiOjM4MCwieSI6OTZ9LCJFUlJPUiI6eyJ4Ijo2NzgsInkiOjEwNn19"
+        },
+        "metadata": {
+          "input": [
+            {
+              "name": "arguments",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"customerId\":{\"type\":\"string\"},\"orderId\":{\"type\":\"string\"},\"reason\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "output": [
+            {
+              "name": "toolResult",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"},\"success\":{\"type\":\"boolean\"}}"
+              }
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"ai_customer_service\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"customerId\":{\"type\":\"string\"},\"orderId\":{\"type\":\"string\"},\"reason\":{\"type\":\"string\"}}}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"toolResult\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"},\"success\":{\"type\":\"boolean\"}}}},\"required\":[]}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:Expedite_Orders",
+      "data": {
+        "name": "Expedite Orders",
+        "description": "Tool to expedite customer orders with notification",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "LogRequest",
+            "type": "label",
+            "label": "StartActivity to LogMessage"
+          },
+          {
+            "id": 2,
+            "from": "LogRequest",
+            "to": "Update_Order_Status",
+            "type": "label",
+            "label": "LogMessage to InvokeRESTService"
+          },
+          {
+            "id": 3,
+            "from": "Update_Order_Status",
+            "to": "SendMail",
+            "type": "expression",
+            "label": "success",
+            "value": "$activity[Update_Order_Status].statusCode == 200"
+          },
+          {
+            "id": 4,
+            "from": "SendMail",
+            "to": "Return",
+            "type": "label",
+            "label": "SendMail to Return"
+          },
+          {
+            "id": 5,
+            "from": "Update_Order_Status",
+            "to": "ThrowError",
+            "type": "exprOtherwise",
+            "label": "Update_Order_Status to ThrowError"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "LogRequest",
+            "name": "LogRequest",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"#### Incoming Order request\", coerce.toString($flow.arguments))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "Update_Order_Status",
+            "name": "Update_Order_Status",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "PUT",
+                "Uri": "=$property[\"systems.Orders.Update_Order_Status\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableSSLVerification": false,
+                "disableKeepAlives": false,
+                "followRedirects": true,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "pathParams": {
+                  "mapping": {
+                    "orderId": "=string.trim($flow.arguments.orderId, '[\\\"]\\\\')"
+                  }
+                },
+                "body": {
+                  "mapping": {
+                    "status": "expedited",
+                    "reason": "=$flow.arguments.reason"
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "throwError": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "pathParams": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"orderId\":{\"type\":\"string\"}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"orderId\",\"type\":\"string\"}]"
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Authorization\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}, {\"parameterName\":\"Authorization\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  },
+                  "dynamicRequestHeaders": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Header\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"required\":[\"name\",\"value\"]}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Header\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"required\":[\"name\",\"value\"]}}}}"
+                  },
+                  "body": "schema://update_order_status"
+                },
+                "output": {
+                  "responseBody": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\"},\"message\":{\"type\":\"string\"},\"data\":{\"type\":\"object\",\"properties\":{\"orderId\":{\"type\":\"string\"},\"oldStatus\":{\"type\":\"string\"}}}}}",
+                    "fe_metadata": "{\n    \"success\": true,\n    \"message\": \"Order status updated to undefined\",\n    \"data\": {\n        \"orderId\": \"ORD-789\",\n        \"oldStatus\": \"expedited\"\n    }\n}"
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "SendMail",
+            "name": "SendMail",
+            "description": "Simple Send Mail Activity",
+            "activity": {
+              "ref": "#sendmail",
+              "input": {
+                "Server": "=$property[\"mail.server\"]",
+                "Port": "=$property[\"mail.port\"]",
+                "Username": "=$property[\"mail.userName\"]",
+                "Password": "=$property[\"mail.passWord\"]",
+                "Connection Security": "NONE",
+                "serverCertificate": "",
+                "message_content_type": "",
+                "sender": "noreply@customer-service.de",
+                "recipients": "sarah.johnson@email.com",
+                "cc_recipients": "",
+                "bcc_recipients": "",
+                "reply_to": "",
+                "subject": "=string.concat(\" Order  : \", $flow.arguments.orderId , \" has been Updated\")",
+                "message": "=string.concat(\" Your order \", $flow.arguments.orderId , \" has been expedited and will arrive 2 days earlier\")"
+              },
+              "schemas": {
+                "input": {
+                  "attachments": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"items\":{\"properties\":{\"file\":{\"type\":\"string\"},\"filename\":{\"type\":\"string\"},\"base64EncodedContents\":{\"type\":\"boolean\"}},\"required\":[\"file\"],\"type\":\"object\"},\"type\":\"array\"}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"items\":{\"properties\":{\"file\":{\"type\":\"string\"},\"filename\":{\"type\":\"string\"},\"base64EncodedContents\":{\"type\":\"boolean\"}},\"required\":[\"file\"],\"type\":\"object\"},\"type\":\"array\"}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Return",
+            "name": "Return",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "toolResult": {
+                    "mapping": {
+                      "success": "=boolean.true()",
+                      "data": "=coerce.toString($activity[Update_Order_Status].responseBody)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "ThrowError",
+            "name": "ThrowError",
+            "description": "Throws an Error",
+            "activity": {
+              "ref": "#error",
+              "input": {
+                "message": "ERROR IN OPERATION",
+                "data": "=$activity[Update_Order_Status].responseBody"
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiTG9nUmVxdWVzdCI6eyJ4IjoyMjQsInkiOjkwfSwiVXBkYXRlX09yZGVyX1N0YXR1cyI6eyJ4Ijo0NTcsInkiOjk1fSwiU2VuZE1haWwiOnsieCI6NzAxLCJ5Ijo5NH0sIlJldHVybiI6eyJ4Ijo5MjUsInkiOjkzfSwiVGhyb3dFcnJvciI6eyJ4Ijo2ODAsInkiOjI4MH19",
+        "errorHandler": {
+          "tasks": [
+            {
+              "id": "LogMessage",
+              "name": "LogMessage",
+              "description": "Simple Log Message Activity",
+              "activity": {
+                "ref": "#log",
+                "input": {
+                  "Log Level": "INFO",
+                  "flowInfo": false,
+                  "message": "=string.concat(\" ##### ERROR : \", $error.activity,  \"  \", $error.message, \"  \", coerce.toString($error.data))",
+                  "logLevel": ""
+                }
+              }
+            },
+            {
+              "id": "ERROR",
+              "name": "ERROR",
+              "description": "Simple Return Activity",
+              "activity": {
+                "ref": "#actreturn",
+                "settings": {
+                  "mappings": {
+                    "toolResult": {
+                      "mapping": {
+                        "error": "=coerce.toString($error.data)",
+                        "success": "=boolean.false()"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "links": [
+            {
+              "id": 6,
+              "from": "LogMessage",
+              "to": "ERROR",
+              "type": "label",
+              "label": "LogMessage to Return1"
+            }
+          ],
+          "fe_metadata": "eyJMb2dNZXNzYWdlIjp7IngiOjM5MCwieSI6MTAwfSwiRVJST1IiOnsieCI6NjkwLCJ5IjoxMTB9fQ=="
+        },
+        "metadata": {
+          "input": [
+            {
+              "name": "arguments",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"customerId\":{\"type\":\"string\"},\"orderId\":{\"type\":\"string\"},\"reason\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "output": [
+            {
+              "name": "toolResult",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"},\"success\":{\"type\":\"boolean\"}}"
+              }
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"ai_customer_service\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"customerId\":{\"type\":\"string\"},\"orderId\":{\"type\":\"string\"},\"reason\":{\"type\":\"string\"}}}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"toolResult\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"},\"success\":{\"type\":\"boolean\"}}}},\"required\":[]}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:Send_Customer_Notification",
+      "data": {
+        "name": "Send Customer Notification",
+        "description": "Generate personalized email content based on customer context",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "LogMessage",
+            "type": "label",
+            "label": "StartActivity to LogMessage"
+          },
+          {
+            "id": 2,
+            "from": "LogMessage",
+            "to": "TemplateEngine",
+            "type": "label",
+            "label": "LogMessage to TemplateEngine"
+          },
+          {
+            "id": 3,
+            "from": "TemplateEngine",
+            "to": "LogMessage1",
+            "type": "expression",
+            "label": "TemplateEngine to LogMessage1",
+            "value": "$activity[TemplateEngine].success"
+          },
+          {
+            "id": 4,
+            "from": "LogMessage1",
+            "to": "Success",
+            "type": "label",
+            "label": "LogMessage1 to Return"
+          },
+          {
+            "id": 5,
+            "from": "TemplateEngine",
+            "to": "ThrowError",
+            "type": "exprOtherwise",
+            "label": "TemplateEngine to ThrowError"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "LogMessage",
+            "name": "LogMessage",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"##### Incoming Prompt request - \", coerce.toString($flow.arguments))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "TemplateEngine",
+            "name": "TemplateEngine",
+            "description": "Dynamic content generation using configurable templates with support for Go templates, Handlebars-style syntax, and OOTB business templates",
+            "activity": {
+              "ref": "#templateengine",
+              "settings": {
+                "templateEngine": "go",
+                "templateCacheSize": 100,
+                "enableSafeMode": "false",
+                "templatePath": ""
+              },
+              "input": {
+                "templateType": "email-apology",
+                "outputFormat": "text",
+                "enableFormatting": "=boolean.true()",
+                "escapeHtml": true,
+                "strictMode": "=boolean.false()",
+                "template": "",
+                "templateData": "=$flow.arguments"
+              },
+              "schemas": {
+                "input": {
+                  "templateData": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"customerName\":{\"type\":\"string\"},\"subject\":{\"type\":\"string\"},\"issueDescription\":{\"type\":\"string\"},\"orderNumber\":{\"type\":\"string\"},\"resolutionSteps\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"compensationOffered\":{\"type\":\"string\"},\"newDeliveryDate\":{\"type\":\"string\"},\"supportEmail\":{\"type\":\"string\"},\"supportPhone\":{\"type\":\"string\"},\"agentName\":{\"type\":\"string\"},\"companyName\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\n  \"customerName\": \"John Smith\",\n  \"subject\": \"Your Recent Order Delay\",\n  \"issueDescription\": \"the unexpected delay in processing your order due to a supply chain disruption\",\n  \"orderNumber\": \"ORD-123456\",\n  \"resolutionSteps\": [\n    \"We have expedited your order to the front of the processing queue\",\n    \"Our fulfillment team is working with priority shipping partners\",\n    \"You will receive hourly updates on the status until delivery\",\n    \"A dedicated customer service representative has been assigned to your case\"\n  ],\n  \"compensationOffered\": \"a full refund of shipping costs and a 15% discount on your next order\",\n  \"newDeliveryDate\": \"Tuesday, August 8th, 2025\",\n  \"supportEmail\": \"support@acmecompany.com\",\n  \"supportPhone\": \"1-800-555-0123\",\n  \"agentName\": \"Sarah Johnson\",\n  \"companyName\": \"ACME Corporation\"\n}\n"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "LogMessage1",
+            "name": "LogMessage1",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"##### Generated Template Response - \", coerce.toString($activity[TemplateEngine]))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "Success",
+            "name": "Success",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "promptResult": {
+                    "mapping": {
+                      "success": "=boolean.true()",
+                      "description": "=$activity[TemplateEngine].templateUsed",
+                      "messages": [
+                        {
+                          "role": "assistant",
+                          "content": "=$activity[TemplateEngine].result"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "ThrowError",
+            "name": "ThrowError",
+            "description": "Throws an Error",
+            "activity": {
+              "ref": "#error",
+              "input": {
+                "message": "ERROR IN OPERATION",
+                "data": "=coerce.toObject($activity[TemplateEngine].error)"
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiTG9nTWVzc2FnZSI6eyJ4IjoxOTYsInkiOjE3MX0sIlRlbXBsYXRlRW5naW5lIjp7IngiOjM4MiwieSI6OTB9LCJMb2dNZXNzYWdlMSI6eyJ4Ijo2MzMsInkiOjkwfSwiU3VjY2VzcyI6eyJ4Ijo5MTEsInkiOjg3fSwiVGhyb3dFcnJvciI6eyJ4Ijo1ODIsInkiOjMwM319",
+        "errorHandler": {
+          "tasks": [
+            {
+              "id": "LogMessage2",
+              "name": "LogMessage2",
+              "description": "Simple Log Message Activity",
+              "activity": {
+                "ref": "#log",
+                "input": {
+                  "Log Level": "INFO",
+                  "flowInfo": false,
+                  "message": "=string.concat(\" ##### ERROR : \", $error.activity,  \"  \", $error.message, \"  \", coerce.toString($error.data))",
+                  "logLevel": ""
+                }
+              }
+            },
+            {
+              "id": "ERROR",
+              "name": "ERROR",
+              "description": "Simple Return Activity",
+              "activity": {
+                "ref": "#actreturn",
+                "settings": {
+                  "mappings": {
+                    "promptResult": {
+                      "mapping": {
+                        "success": "=boolean.false()",
+                        "description": "ERROR WHILE GENERATING EMAIL TEMPLATE",
+                        "error": "=coerce.toString($error.data)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "links": [
+            {
+              "id": 6,
+              "from": "LogMessage2",
+              "to": "ERROR",
+              "type": "label",
+              "label": "LogMessage to Return1"
+            }
+          ],
+          "fe_metadata": "eyJMb2dNZXNzYWdlMiI6eyJ4Ijo0MDAsInkiOjEwMH0sIkVSUk9SIjp7IngiOjcwMCwieSI6MTEwfX0="
+        },
+        "metadata": {
+          "input": [
+            {
+              "name": "arguments",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"emailType\":{\"type\":\"string\"},\"customerId\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"tier\":{\"type\":\"string\"},\"totalSpent\":{\"type\":\"string\"},\"email\":{\"type\":\"string\"},\"orderId\":{\"type\":\"string\"},\"issueType\":{\"type\":\"string\"},\"urgency\":{\"type\":\"string\"},\"orderValue\":{\"type\":\"string\"},\"delayReason\":{\"type\":\"string\"},\"agentId\":{\"type\":\"string\"},\"sessionId\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "output": [
+            {
+              "name": "promptResult",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"description\":{\"type\":\"string\"},\"messages\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\"},\"content\":{\"type\":\"string\"}},\"required\":[\"role\",\"content\"]}},\"success\":{\"type\":\"boolean\"},\"error\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"ai_customer_service\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"emailType\":{\"type\":\"string\"},\"customerId\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"tier\":{\"type\":\"string\"},\"totalSpent\":{\"type\":\"string\"},\"email\":{\"type\":\"string\"},\"orderId\":{\"type\":\"string\"},\"issueType\":{\"type\":\"string\"},\"urgency\":{\"type\":\"string\"},\"orderValue\":{\"type\":\"string\"},\"delayReason\":{\"type\":\"string\"},\"agentId\":{\"type\":\"string\"},\"sessionId\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"promptResult\":{\"type\":\"object\",\"properties\":{\"description\":{\"type\":\"string\"},\"messages\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\"},\"content\":{\"type\":\"string\"}},\"required\":[\"role\",\"content\"]}},\"success\":{\"type\":\"boolean\"},\"error\":{\"type\":\"string\"}}}},\"required\":[]}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:Send_Email",
+      "data": {
+        "name": "Send Email",
+        "description": "Send Personalised Emails to Customer ",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "LogMessage",
+            "type": "label",
+            "label": "StartActivity to LogMessage"
+          },
+          {
+            "id": 2,
+            "from": "LogMessage",
+            "to": "SendMail",
+            "type": "label",
+            "label": "LogMessage to SendMail"
+          },
+          {
+            "id": 3,
+            "from": "SendMail",
+            "to": "Return",
+            "type": "label",
+            "label": "SendMail to Return"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "LogMessage",
+            "name": "LogMessage",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"##### Personlised Email Request - \", coerce.toString($flow.arguments))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "SendMail",
+            "name": "SendMail",
+            "description": "Simple Send Mail Activity",
+            "activity": {
+              "ref": "#sendmail",
+              "input": {
+                "Server": "=$property[\"mail.server\"]",
+                "Port": "=$property[\"mail.port\"]",
+                "Username": "=$property[\"mail.userName\"]",
+                "Password": "=$property[\"mail.passWord\"]",
+                "Connection Security": "NONE",
+                "serverCertificate": "",
+                "message_content_type": "",
+                "sender": "noreply@customer-service.de",
+                "recipients": "=$flow.arguments.email",
+                "cc_recipients": "",
+                "bcc_recipients": "",
+                "reply_to": "",
+                "subject": "=$flow.arguments.subject",
+                "message": "=$flow.arguments.mailContent"
+              },
+              "schemas": {
+                "input": {
+                  "attachments": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"items\":{\"properties\":{\"file\":{\"type\":\"string\"},\"filename\":{\"type\":\"string\"},\"base64EncodedContents\":{\"type\":\"boolean\"}},\"required\":[\"file\"],\"type\":\"object\"},\"type\":\"array\"}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"items\":{\"properties\":{\"file\":{\"type\":\"string\"},\"filename\":{\"type\":\"string\"},\"base64EncodedContents\":{\"type\":\"boolean\"}},\"required\":[\"file\"],\"type\":\"object\"},\"type\":\"array\"}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Return",
+            "name": "Return",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "toolResult": {
+                    "mapping": {
+                      "success": "=boolean.true()",
+                      "data": "Customer has Email now!!!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiTG9nTWVzc2FnZSI6eyJ4IjoyMzAsInkiOjkyfSwiU2VuZE1haWwiOnsieCI6NDgzLCJ5Ijo5NH0sIlJldHVybiI6eyJ4Ijo3MjIsInkiOjkyfX0=",
+        "errorHandler": {
+          "tasks": [
+            {
+              "id": "LogMessage2",
+              "name": "LogMessage2",
+              "description": "Simple Log Message Activity",
+              "activity": {
+                "ref": "#log",
+                "input": {
+                  "Log Level": "INFO",
+                  "flowInfo": false,
+                  "message": "=string.concat(\" ##### ERROR : \", $error.activity,  \"  \", $error.message, \"  \", coerce.toString($error.data))",
+                  "logLevel": ""
+                }
+              }
+            },
+            {
+              "id": "ERROR",
+              "name": "ERROR",
+              "description": "Simple Return Activity",
+              "activity": {
+                "ref": "#actreturn",
+                "settings": {
+                  "mappings": {
+                    "toolResult": {
+                      "mapping": {
+                        "data": "=$error.message",
+                        "error": "=coerce.toString($error.data)",
+                        "success": "=boolean.false()"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "links": [
+            {
+              "id": 4,
+              "from": "LogMessage2",
+              "to": "ERROR",
+              "type": "label",
+              "label": "LogMessage to Return1"
+            }
+          ],
+          "fe_metadata": "eyJMb2dNZXNzYWdlMiI6eyJ4Ijo0MTAsInkiOjEwMH0sIkVSUk9SIjp7IngiOjcxMCwieSI6MTEwfX0="
+        },
+        "metadata": {
+          "input": [
+            {
+              "name": "arguments",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"email\":{\"type\":\"string\"},\"subject\":{\"type\":\"string\"},\"mailContent\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "output": [
+            {
+              "name": "toolResult",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"},\"success\":{\"type\":\"boolean\"}}"
+              }
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"ai_customer_service\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"email\":{\"type\":\"string\"},\"subject\":{\"type\":\"string\"},\"mailContent\":{\"type\":\"string\"}}}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"toolResult\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"},\"success\":{\"type\":\"boolean\"}}}},\"required\":[]}"
+          }
+        }
+      }
+    }
+  ],
+  "properties": [
+    {
+      "name": "mcp.serverPort",
+      "type": "string",
+      "value": "9998"
+    },
+    {
+      "name": "mcp.serverName",
+      "type": "string",
+      "value": "ai-customer-service"
+    },
+    {
+      "name": "mcp.generate_email.primitiveName",
+      "type": "string",
+      "value": "generate_email_prompt"
+    },
+    {
+      "name": "mcp.generate_email.primitiveDescription",
+      "type": "string",
+      "value": "Generate personalized email content based on customer context"
+    },
+    {
+      "name": "mcp.customer_360.primitiveName",
+      "type": "string",
+      "value": "get_customer_360_resource"
+    },
+    {
+      "name": "mcp.customer_360.primitiveDescription",
+      "type": "string",
+      "value": "Customer profile information aggregated from multiple systems"
+    },
+    {
+      "name": "mcp.expediate_order.primitiveName",
+      "type": "string",
+      "value": "expedite_order_tool"
+    },
+    {
+      "name": "mcp.expediate_order.primitiveDescription",
+      "type": "string",
+      "value": "Update order status, notify customer, and trigger fulfillment"
+    },
+    {
+      "name": "systems.CRM_APIs.Get_Support_History",
+      "type": "string",
+      "value": "http://localhost:3001/api/support/customers/{customerId}/tickets"
+    },
+    {
+      "name": "systems.CRM_APIs.Get_Customer_Profile",
+      "type": "string",
+      "value": "http://localhost:3001/api/crm/customers/{customerId}"
+    },
+    {
+      "name": "systems.CRM_APIs.Get_Customer_Orders",
+      "type": "string",
+      "value": "http://localhost:3001/api/orders/customers/{customerId}/orders"
+    },
+    {
+      "name": "mcp.customer_360.resourceURI",
+      "type": "string",
+      "value": "customer://{customerId}/profile"
+    },
+    {
+      "name": "systems.Orders.Update_Order_Status",
+      "type": "string",
+      "value": "http://localhost:3001/api/orders/{orderId}/status"
+    },
+    {
+      "name": "mail.server",
+      "type": "string",
+      "value": "localhost"
+    },
+    {
+      "name": "mail.port",
+      "type": "float64",
+      "value": 1025
+    },
+    {
+      "name": "mail.userName",
+      "type": "string",
+      "value": "demoUser"
+    },
+    {
+      "name": "mail.passWord",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "mcp.send_mail.primitiveDescription",
+      "type": "string",
+      "value": "Send Personalised email to Customers."
+    },
+    {
+      "name": "mcp.send_mail.primitiveName",
+      "type": "string",
+      "value": "send_email"
+    }
+  ],
+  "schemas": {
+    "customer_orders": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"success\": {\n            \"type\": \"boolean\"\n        },\n        \"data\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"orderId\": {\n                        \"type\": \"string\"\n                    },\n                    \"customerId\": {\n                        \"type\": \"string\"\n                    },\n                    \"orderDate\": {\n                        \"type\": \"string\"\n                    },\n                    \"status\": {\n                        \"type\": \"string\"\n                    },\n                    \"items\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"productId\": {\n                                    \"type\": \"string\"\n                                },\n                                \"name\": {\n                                    \"type\": \"string\"\n                                },\n                                \"quantity\": {\n                                    \"type\": \"number\"\n                                },\n                                \"price\": {\n                                    \"type\": \"number\"\n                                }\n                            },\n                            \"required\": [\n                                \"productId\",\n                                \"name\",\n                                \"quantity\",\n                                \"price\"\n                            ]\n                        }\n                    },\n                    \"shipping\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"method\": {\n                                \"type\": \"string\"\n                            },\n                            \"trackingNumber\": {\n                                \"type\": \"string\"\n                            },\n                            \"estimatedDelivery\": {\n                                \"type\": \"string\"\n                            },\n                            \"carrier\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    },\n                    \"payment\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"method\": {\n                                \"type\": \"string\"\n                            },\n                            \"last4\": {\n                                \"type\": \"string\"\n                            },\n                            \"amount\": {\n                                \"type\": \"number\"\n                            },\n                            \"currency\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    },\n                    \"lastUpdated\": {\n                        \"type\": \"string\"\n                    },\n                    \"statusReason\": {\n                        \"type\": \"string\"\n                    }\n                }\n            }\n        },\n        \"count\": {\n            \"type\": \"number\"\n        },\n        \"timestamp\": {\n            \"type\": \"string\"\n        },\n        \"source\": {\n            \"type\": \"string\"\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"success\": {\n            \"type\": \"boolean\"\n        },\n        \"data\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"orderId\": {\n                        \"type\": \"string\"\n                    },\n                    \"customerId\": {\n                        \"type\": \"string\"\n                    },\n                    \"orderDate\": {\n                        \"type\": \"string\"\n                    },\n                    \"status\": {\n                        \"type\": \"string\"\n                    },\n                    \"items\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"productId\": {\n                                    \"type\": \"string\"\n                                },\n                                \"name\": {\n                                    \"type\": \"string\"\n                                },\n                                \"quantity\": {\n                                    \"type\": \"number\"\n                                },\n                                \"price\": {\n                                    \"type\": \"number\"\n                                }\n                            },\n                            \"required\": [\n                                \"productId\",\n                                \"name\",\n                                \"quantity\",\n                                \"price\"\n                            ]\n                        }\n                    },\n                    \"shipping\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"method\": {\n                                \"type\": \"string\"\n                            },\n                            \"trackingNumber\": {\n                                \"type\": \"string\"\n                            },\n                            \"estimatedDelivery\": {\n                                \"type\": \"string\"\n                            },\n                            \"carrier\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    },\n                    \"payment\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"method\": {\n                                \"type\": \"string\"\n                            },\n                            \"last4\": {\n                                \"type\": \"string\"\n                            },\n                            \"amount\": {\n                                \"type\": \"number\"\n                            },\n                            \"currency\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    },\n                    \"lastUpdated\": {\n                        \"type\": \"string\"\n                    },\n                    \"statusReason\": {\n                        \"type\": \"string\"\n                    }\n                }\n            }\n        },\n        \"count\": {\n            \"type\": \"number\"\n        },\n        \"timestamp\": {\n            \"type\": \"string\"\n        },\n        \"source\": {\n            \"type\": \"string\"\n        }\n    }\n}"
+    },
+    "customer_profile": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"success\": {\n            \"type\": \"boolean\"\n        },\n        \"data\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"customerId\": {\n                    \"type\": \"string\"\n                },\n                \"profile\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"firstName\": {\n                            \"type\": \"string\"\n                        },\n                        \"lastName\": {\n                            \"type\": \"string\"\n                        },\n                        \"email\": {\n                            \"type\": \"string\"\n                        },\n                        \"phone\": {\n                            \"type\": \"string\"\n                        },\n                        \"memberSince\": {\n                            \"type\": \"string\"\n                        },\n                        \"tier\": {\n                            \"type\": \"string\"\n                        },\n                        \"preferredContact\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                },\n                \"address\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"street\": {\n                            \"type\": \"string\"\n                        },\n                        \"city\": {\n                            \"type\": \"string\"\n                        },\n                        \"state\": {\n                            \"type\": \"string\"\n                        },\n                        \"zipCode\": {\n                            \"type\": \"string\"\n                        },\n                        \"country\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                },\n                \"preferences\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"emailNotifications\": {\n                            \"type\": \"boolean\"\n                        },\n                        \"smsNotifications\": {\n                            \"type\": \"boolean\"\n                        },\n                        \"language\": {\n                            \"type\": \"string\"\n                        },\n                        \"timezone\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                }\n            }\n        },\n        \"timestamp\": {\n            \"type\": \"string\"\n        },\n        \"source\": {\n            \"type\": \"string\"\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"success\": {\n            \"type\": \"boolean\"\n        },\n        \"data\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"customerId\": {\n                    \"type\": \"string\"\n                },\n                \"profile\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"firstName\": {\n                            \"type\": \"string\"\n                        },\n                        \"lastName\": {\n                            \"type\": \"string\"\n                        },\n                        \"email\": {\n                            \"type\": \"string\"\n                        },\n                        \"phone\": {\n                            \"type\": \"string\"\n                        },\n                        \"memberSince\": {\n                            \"type\": \"string\"\n                        },\n                        \"tier\": {\n                            \"type\": \"string\"\n                        },\n                        \"preferredContact\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                },\n                \"address\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"street\": {\n                            \"type\": \"string\"\n                        },\n                        \"city\": {\n                            \"type\": \"string\"\n                        },\n                        \"state\": {\n                            \"type\": \"string\"\n                        },\n                        \"zipCode\": {\n                            \"type\": \"string\"\n                        },\n                        \"country\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                },\n                \"preferences\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"emailNotifications\": {\n                            \"type\": \"boolean\"\n                        },\n                        \"smsNotifications\": {\n                            \"type\": \"boolean\"\n                        },\n                        \"language\": {\n                            \"type\": \"string\"\n                        },\n                        \"timezone\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                }\n            }\n        },\n        \"timestamp\": {\n            \"type\": \"string\"\n        },\n        \"source\": {\n            \"type\": \"string\"\n        }\n    }\n}"
+    },
+    "support_tickets": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"success\": {\n            \"type\": \"boolean\"\n        },\n        \"data\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"ticketId\": {\n                        \"type\": \"string\"\n                    },\n                    \"customerId\": {\n                        \"type\": \"string\"\n                    },\n                    \"orderId\": {\n                        \"type\": \"string\"\n                    },\n                    \"subject\": {\n                        \"type\": \"string\"\n                    },\n                    \"description\": {\n                        \"type\": \"string\"\n                    },\n                    \"priority\": {\n                        \"type\": \"string\"\n                    },\n                    \"status\": {\n                        \"type\": \"string\"\n                    },\n                    \"createdDate\": {\n                        \"type\": \"string\"\n                    },\n                    \"category\": {\n                        \"type\": \"string\"\n                    },\n                    \"assignedAgent\": {\n                        \"type\": \"string\"\n                    },\n                    \"tags\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                }\n            }\n        },\n        \"count\": {\n            \"type\": \"number\"\n        },\n        \"timestamp\": {\n            \"type\": \"string\"\n        },\n        \"source\": {\n            \"type\": \"string\"\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"success\": {\n            \"type\": \"boolean\"\n        },\n        \"data\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"ticketId\": {\n                        \"type\": \"string\"\n                    },\n                    \"customerId\": {\n                        \"type\": \"string\"\n                    },\n                    \"orderId\": {\n                        \"type\": \"string\"\n                    },\n                    \"subject\": {\n                        \"type\": \"string\"\n                    },\n                    \"description\": {\n                        \"type\": \"string\"\n                    },\n                    \"priority\": {\n                        \"type\": \"string\"\n                    },\n                    \"status\": {\n                        \"type\": \"string\"\n                    },\n                    \"createdDate\": {\n                        \"type\": \"string\"\n                    },\n                    \"category\": {\n                        \"type\": \"string\"\n                    },\n                    \"assignedAgent\": {\n                        \"type\": \"string\"\n                    },\n                    \"tags\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                }\n            }\n        },\n        \"count\": {\n            \"type\": \"number\"\n        },\n        \"timestamp\": {\n            \"type\": \"string\"\n        },\n        \"source\": {\n            \"type\": \"string\"\n        }\n    }\n}"
+    },
+    "aggregated_data": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"customerData\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"customerId\": {\n                    \"type\": \"string\"\n                },\n                \"profile\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"firstName\": {\n                            \"type\": \"string\"\n                        },\n                        \"lastName\": {\n                            \"type\": \"string\"\n                        },\n                        \"email\": {\n                            \"type\": \"string\"\n                        },\n                        \"phone\": {\n                            \"type\": \"string\"\n                        },\n                        \"memberSince\": {\n                            \"type\": \"string\"\n                        },\n                        \"tier\": {\n                            \"type\": \"string\"\n                        },\n                        \"preferredContact\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                },\n                \"address\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"street\": {\n                            \"type\": \"string\"\n                        },\n                        \"city\": {\n                            \"type\": \"string\"\n                        },\n                        \"state\": {\n                            \"type\": \"string\"\n                        },\n                        \"zipCode\": {\n                            \"type\": \"string\"\n                        },\n                        \"country\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                },\n                \"preferences\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"emailNotifications\": {\n                            \"type\": \"boolean\"\n                        },\n                        \"smsNotifications\": {\n                            \"type\": \"boolean\"\n                        },\n                        \"language\": {\n                            \"type\": \"string\"\n                        },\n                        \"timezone\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                }\n            }\n        },\n        \"orderDetails\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"orderId\": {\n                        \"type\": \"string\"\n                    },\n                    \"customerId\": {\n                        \"type\": \"string\"\n                    },\n                    \"orderDate\": {\n                        \"type\": \"string\"\n                    },\n                    \"status\": {\n                        \"type\": \"string\"\n                    },\n                    \"items\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"productId\": {\n                                    \"type\": \"string\"\n                                },\n                                \"name\": {\n                                    \"type\": \"string\"\n                                },\n                                \"quantity\": {\n                                    \"type\": \"number\"\n                                },\n                                \"price\": {\n                                    \"type\": \"number\"\n                                }\n                            },\n                            \"required\": [\n                                \"productId\",\n                                \"name\",\n                                \"quantity\",\n                                \"price\"\n                            ]\n                        }\n                    },\n                    \"shipping\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"method\": {\n                                \"type\": \"string\"\n                            },\n                            \"trackingNumber\": {\n                                \"type\": \"string\"\n                            },\n                            \"estimatedDelivery\": {\n                                \"type\": \"string\"\n                            },\n                            \"carrier\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    },\n                    \"payment\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"method\": {\n                                \"type\": \"string\"\n                            },\n                            \"last4\": {\n                                \"type\": \"string\"\n                            },\n                            \"amount\": {\n                                \"type\": \"number\"\n                            },\n                            \"currency\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    },\n                    \"lastUpdated\": {\n                        \"type\": \"string\"\n                    },\n                    \"statusReason\": {\n                        \"type\": \"string\"\n                    }\n                }\n            }\n        },\n        \"supportTicket\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"ticketId\": {\n                        \"type\": \"string\"\n                    },\n                    \"customerId\": {\n                        \"type\": \"string\"\n                    },\n                    \"orderId\": {\n                        \"type\": \"string\"\n                    },\n                    \"subject\": {\n                        \"type\": \"string\"\n                    },\n                    \"description\": {\n                        \"type\": \"string\"\n                    },\n                    \"priority\": {\n                        \"type\": \"string\"\n                    },\n                    \"status\": {\n                        \"type\": \"string\"\n                    },\n                    \"createdDate\": {\n                        \"type\": \"string\"\n                    },\n                    \"category\": {\n                        \"type\": \"string\"\n                    },\n                    \"assignedAgent\": {\n                        \"type\": \"string\"\n                    },\n                    \"tags\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                }\n            }\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"customerData\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"customerId\": {\n                    \"type\": \"string\"\n                },\n                \"profile\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"firstName\": {\n                            \"type\": \"string\"\n                        },\n                        \"lastName\": {\n                            \"type\": \"string\"\n                        },\n                        \"email\": {\n                            \"type\": \"string\"\n                        },\n                        \"phone\": {\n                            \"type\": \"string\"\n                        },\n                        \"memberSince\": {\n                            \"type\": \"string\"\n                        },\n                        \"tier\": {\n                            \"type\": \"string\"\n                        },\n                        \"preferredContact\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                },\n                \"address\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"street\": {\n                            \"type\": \"string\"\n                        },\n                        \"city\": {\n                            \"type\": \"string\"\n                        },\n                        \"state\": {\n                            \"type\": \"string\"\n                        },\n                        \"zipCode\": {\n                            \"type\": \"string\"\n                        },\n                        \"country\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                },\n                \"preferences\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"emailNotifications\": {\n                            \"type\": \"boolean\"\n                        },\n                        \"smsNotifications\": {\n                            \"type\": \"boolean\"\n                        },\n                        \"language\": {\n                            \"type\": \"string\"\n                        },\n                        \"timezone\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                }\n            }\n        },\n        \"orderDetails\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"orderId\": {\n                        \"type\": \"string\"\n                    },\n                    \"customerId\": {\n                        \"type\": \"string\"\n                    },\n                    \"orderDate\": {\n                        \"type\": \"string\"\n                    },\n                    \"status\": {\n                        \"type\": \"string\"\n                    },\n                    \"items\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"productId\": {\n                                    \"type\": \"string\"\n                                },\n                                \"name\": {\n                                    \"type\": \"string\"\n                                },\n                                \"quantity\": {\n                                    \"type\": \"number\"\n                                },\n                                \"price\": {\n                                    \"type\": \"number\"\n                                }\n                            },\n                            \"required\": [\n                                \"productId\",\n                                \"name\",\n                                \"quantity\",\n                                \"price\"\n                            ]\n                        }\n                    },\n                    \"shipping\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"method\": {\n                                \"type\": \"string\"\n                            },\n                            \"trackingNumber\": {\n                                \"type\": \"string\"\n                            },\n                            \"estimatedDelivery\": {\n                                \"type\": \"string\"\n                            },\n                            \"carrier\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    },\n                    \"payment\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"method\": {\n                                \"type\": \"string\"\n                            },\n                            \"last4\": {\n                                \"type\": \"string\"\n                            },\n                            \"amount\": {\n                                \"type\": \"number\"\n                            },\n                            \"currency\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    },\n                    \"lastUpdated\": {\n                        \"type\": \"string\"\n                    },\n                    \"statusReason\": {\n                        \"type\": \"string\"\n                    }\n                }\n            }\n        },\n        \"supportTicket\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"ticketId\": {\n                        \"type\": \"string\"\n                    },\n                    \"customerId\": {\n                        \"type\": \"string\"\n                    },\n                    \"orderId\": {\n                        \"type\": \"string\"\n                    },\n                    \"subject\": {\n                        \"type\": \"string\"\n                    },\n                    \"description\": {\n                        \"type\": \"string\"\n                    },\n                    \"priority\": {\n                        \"type\": \"string\"\n                    },\n                    \"status\": {\n                        \"type\": \"string\"\n                    },\n                    \"createdDate\": {\n                        \"type\": \"string\"\n                    },\n                    \"category\": {\n                        \"type\": \"string\"\n                    },\n                    \"assignedAgent\": {\n                        \"type\": \"string\"\n                    },\n                    \"tags\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                }\n            }\n        }\n    }\n}"
+    },
+    "update_order_status": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"status\": {\n            \"type\": \"string\"\n        },\n        \"reason\": {\n            \"type\": \"string\"\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"status\": {\n            \"type\": \"string\"\n        },\n        \"reason\": {\n            \"type\": \"string\"\n        }\n    }\n}"
+    }
+  },
+  "connections": {},
+  "contrib": "W3sicmVmIjoiZ2l0aHViLmNvbS90aWJjby9mbG9nby1tY3Avc3JjL2FwcC9NQ1AiLCJpZCI6Ik1DUCIsInZlcnNpb24iOiIwLjkuMCIsInRhZyI6IjAuOS4wLWIxNSIsIm5hbWUiOiJNb2RlbCBDb250ZXh0IFByb3RvY29sIChNQ1ApIERldmVsb3BlciBQcmV2aWV3IiwiczNsb2NhdGlvbiI6IlRpYmNvL01DUCIsImlzVXNlckV4dGVuc2lvbiI6ZmFsc2V9LHsicmVmIjoiZ2l0aHViLmNvbS90aWJjby9mbG9nby1nZW5lcmFsL3NyYy9hcHAvR2VuZXJhbCIsImlkIjoiR2VuZXJhbCIsInZlcnNpb24iOiIxLjYuOSIsInRhZyI6IjEuNi45LWIwMSIsIm5hbWUiOiJHZW5lcmFsIiwiczNsb2NhdGlvbiI6IlRpYmNvL0dlbmVyYWwiLCJpc1VzZXJFeHRlbnNpb24iOmZhbHNlfSx7InJlZiI6ImdpdGh1Yi5jb20vbXBhbmRhdi10aWJjby9mbG9nby1jdXN0b20tZXh0ZW5zaW9ucy9hY3Rpdml0eS90ZW1wbGF0ZWVuZ2luZSIsInZlcnNpb24iOiIxLjAuMCIsInRhZyI6IjEuMC4wIiwibmFtZSI6IlRlbXBsYXRlRW5naW5lIiwiaWQiOiJ0aWJjby10ZW1wbGF0ZS1lbmdpbmUiLCJzM2xvY2F0aW9uIjoie1VTRVJJRH0vRGVmYXVsdC9hY3Rpdml0eS90ZW1wbGF0ZWVuZ2luZSIsImlzVXNlckV4dGVuc2lvbiI6dHJ1ZX1d",
+  "metadata": {
+    "endpoints": [
+      {
+        "protocol": "http",
+        "port": "9998",
+        "title": "ai_customer_service",
+        "type": "public"
+      }
+    ],
+    "flogoVersion": "2.25.9"
+  }
+}

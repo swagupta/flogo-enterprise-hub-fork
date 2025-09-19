@@ -1,0 +1,54 @@
+[
+    {
+        "ticketId": "TKT-001",
+        "customerId": "12345",
+        "orderId": "ORD-789",
+        "subject": "Delayed shipment inquiry",
+        "description": "Customer asking about delayed order ORD-789. Expected delivery was 2024-01-22 but tracking shows delay.",
+        "priority": "medium",
+        "status": "open",
+        "createdDate": "2024-01-20",
+        "category": "shipping",
+        "assignedAgent": "agent-001",
+        "tags": [
+            "shipping",
+            "delay",
+            "tracking"
+        ]
+    },
+    {
+        "ticketId": "TKT-002",
+        "customerId": "67890",
+        "orderId": "ORD-456",
+        "subject": "Product feedback",
+        "description": "Customer very satisfied with laptop stand quality and delivery speed.",
+        "priority": "low",
+        "status": "resolved",
+        "createdDate": "2024-01-13",
+        "resolvedDate": "2024-01-13",
+        "category": "feedback",
+        "assignedAgent": "agent-002",
+        "tags": [
+            "feedback",
+            "positive",
+            "product"
+        ]
+    },
+    {
+        "ticketId": "TKT-003",
+        "customerId": "11111",
+        "subject": "Payment issue resolution",
+        "description": "Customer had payment declined initially but order is now processing successfully.",
+        "priority": "high",
+        "status": "resolved",
+        "createdDate": "2024-01-18",
+        "resolvedDate": "2024-01-19",
+        "category": "payment",
+        "assignedAgent": "agent-001",
+        "tags": [
+            "payment",
+            "resolved",
+            "processing"
+        ]
+    }
+]
