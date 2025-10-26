@@ -15,7 +15,6 @@ This demo showcases how Flogo MCP Connector can turn a TIBCO Managed File Transf
 
 
 ![image info](images/FLOGO_MCP_MFT/MCP-Server-for-Flogo-Overview.png)
-<<<<<<< HEAD
 
 ### Prerequisites for building/running this demonstration:
 - A running TIBCO MFT environment 
@@ -79,5 +78,4 @@ Navigate back to the Chat screen and click the "Search and Tools" button
 
 ![image info](images/FLOGO_MCP_MFT/Claude_CFG2.png)
 =======
->>>>>>> 64f360e560f55c28031e023f102aaf55d6b5bf60
 
