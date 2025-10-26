@@ -12,7 +12,7 @@ This demo showcases how Flogo MCP Connector can turn a TIBCO Managed File Transf
  **In this demonstration, we build a **Managed File Transfer B2B AI agent** using the Flogo MCP Connector. It illustrates how the three MCP primitives — **Resources**, **Tools**, and **Prompts** — work together to connect AI models (like Claude or N8N with OpenAI model) with enterprise data from the Managed File Transfer system in a controlled, compliant, and context-aware way.
 
 
-![image info](AI/images/FLOGO_MCP_MFT/MCP-Server-for-Flogo-Overview.png)
+![image info](images/FLOGO_MCP_MFT/MCP-Server-for-Flogo-Overview.png)
 
 
 ## Use case: Audit Records retrieval
@@ -26,16 +26,16 @@ Can you collect audit records from the MFT system of the last 10 days? The outpu
 
 Output from Claude Desktop:
 
-![image info](AI/images/FLOGO_MCP_MFT/Claude_auditResult.png)
+![image info](images/FLOGO_MCP_MFT/Claude_auditResult.png)
 
 
 ## Use case: Governance and Compliance
 
 
-![image info](AI/images/FLOGO_MCP_MFT/MFT_CC_Users.png)
+![image info](images/FLOGO_MCP_MFT/MFT_CC_Users.png)
 
 
-![image info](AI/images/FLOGO_MCP_MFT/MFT_CC_Transfers.png)
+![image info](images/FLOGO_MCP_MFT/MFT_CC_Transfers.png)
 
 
 ### Example : Claude Desktop
@@ -48,10 +48,10 @@ I would like to know which users have access to which transfer. Can you create t
 Output from Claude Desktop:
 
 
-![image info](AI/images/FLOGO_MCP_MFT/Claude_auditResult1.png)
+![image info](images/FLOGO_MCP_MFT/Claude_auditResult1.png)
 
 
-![image info](AI/images/FLOGO_MCP_MFT/ExcelResult_Claude.png)
+![image info](images/FLOGO_MCP_MFT/ExcelResult_Claude.png)
 
 
 ## Get started
@@ -60,7 +60,7 @@ Output from Claude Desktop:
 - A running TIBCO MFT environment 
 *I used a TIBCO MFT installation in a docker desktop environment running the [command center](https://docs.tibco.com/products/tibco-managed-file-transfer-command-center-8-6-0) and [internet server](https://docs.tibco.com/products/tibco-managed-file-transfer-internet-server) in a docker container.*
 
-![image info](AI/images/FLOGO_MCP_MFT/DockerDesktop.png)
+![image info](images/FLOGO_MCP_MFT/DockerDesktop.png)
 - Visual Code Studio with the Flogo Plugin
 - Claude Desktop can be downloaded from the link below:  
    [https://claude.ai/download](https://claude.ai/download)
@@ -71,9 +71,9 @@ Output from Claude Desktop:
 
 
 
-![image info](AI/images/FLOGO_MCP_MFT/FLOGO_MCP1.png)
+![image info](images/FLOGO_MCP_MFT/FLOGO_MCP1.png)
 
-![image info](AI/images/FLOGO_MCP_MFT/FLOGO_MCP2.png)
+![image info](images/FLOGO_MCP_MFT/FLOGO_MCP2.png)
 
 
 #### Claude Desktop Configuration
@@ -99,16 +99,16 @@ Output from Claude Desktop:
 Navigate to: >File >Settings >Developer
 In the configuration of the MCP Servers, you should be able to see the FLOGO MCP Server in the running status.
 
-![image info](AI/images/FLOGO_MCP_MFT/Claude_CFG3.png)
+![image info](images/FLOGO_MCP_MFT/Claude_CFG3.png)
 
 
 Navigate back to the Chat screen and click the "Search and Tools" button
 
 
-![image info](AI/images/FLOGO_MCP_MFT/Claude_CFG1.png)
+![image info](images/FLOGO_MCP_MFT/Claude_CFG1.png)
 
 
-![image info](AI/images/FLOGO_MCP_MFT/Claude_CFG2.png)
+![image info](images/FLOGO_MCP_MFT/Claude_CFG2.png)
 
 
 ### The materials to setup this demo is available on GitHub:  
