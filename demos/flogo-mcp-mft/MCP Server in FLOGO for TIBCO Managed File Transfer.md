@@ -35,7 +35,7 @@ Output from Claude Desktop:
 ![image info](images/FLOGO_MCP_MFT/MFT_CC_Users.png)
 
 
-![image info](images/FLOGO_MCP_MFT/MFT_CC_Transfers.png)
+![image info](images/FLOGO_MCP_MFT/MFT_CC_transfers.png)
 
 
 ### Example : Claude Desktop
