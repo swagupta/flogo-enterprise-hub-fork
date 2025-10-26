@@ -48,7 +48,7 @@ I would like to know which users have access to which transfer. Can you create t
 Output from Claude Desktop:
 
 
-![image info](images/FLOGO_MCP_MFT/Claude_auditResult1.png)
+![image info](images/FLOGO_MCP_MFT/Claude_AuditResult1.png)
 
 
 ![image info](images/FLOGO_MCP_MFT/ExcelResult_Claude.png)
