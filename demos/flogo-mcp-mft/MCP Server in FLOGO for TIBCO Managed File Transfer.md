@@ -26,7 +26,6 @@ Can you collect audit records from the MFT system of the last 10 days? The outpu
 
 Output from Claude Desktop:
 
-![image info](AI/images/FLOGO_MCP_MFT/Claude_auditResult.png)
 ![image info](AI/images/FLOGO_MCP_MFT/Claude_AuditResult.png)
 
 
@@ -36,7 +35,6 @@ Output from Claude Desktop:
 ![image info](AI/images/FLOGO_MCP_MFT/MFT_CC_Users.png)
 
 
-![image info](AI/images/FLOGO_MCP_MFT/MFT_CC_Transfers.png)
 ![image info](AI/images/FLOGO_MCP_MFT/MFT_CC_transfers.png)
 
 
@@ -56,7 +54,6 @@ Output from Claude Desktop:
 ![image info](AI/images/FLOGO_MCP_MFT/ExcelResult_Claude.png)
 
 
-## Get started
 ## Getting started
 
 ### Prerequisites for building/running this demonstration:
@@ -87,7 +84,6 @@ The MCP-Tool definition is the actual flow definition which is responsible for c
 
 
 #### Claude Desktop Configuration
-
 
 In the Claude Desktop configuration the Flogo MCP Server should be registered as a Local MCP Server. You will need to update the *claude_desktop_config.json* file with the following definitions.
 Navigate to: >File >Settings >Developer and edit the file accordingly.
@@ -124,6 +120,6 @@ Navigate back to the Chat screen and click the "Search and Tools" button
 
 
 ### The materials to setup this demo is available on GitHub:  
-[Flogo MCP Server on TIBCO Managed File Transfer](https://github.com/TIBCOSoftware/flogo-enterprise-hub/blob/master/demos/ai-powered-customer-service/README.md?utm_source=chatgpt.com)[Flogo MCP Server on TIBCO Managed File Transfer](https://github.com/TIBCOSoftware/flogo-enterprise-hub/blob/master/demos/ai-powered-customer-service/README.md?utm_source=chatgpt.com)
+[Flogo MCP Server on TIBCO Managed File Transfer](https://github.com/TIBCOSoftware/flogo-enterprise-hub/blob/master/demos/ai-powered-customer-service/README.md?utm_source=chatgpt.com)
 
 
