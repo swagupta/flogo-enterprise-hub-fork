@@ -26,7 +26,7 @@ Can you collect audit records from the MFT system of the last 10 days? The outpu
 
 Output from Claude Desktop:
 
-![image info](images/FLOGO_MCP_MFT/Claude_auditResult.png)
+![image info](images/FLOGO_MCP_MFT/Claude_AuditResult.png)
 
 
 ## Use case: Governance and Compliance
@@ -48,7 +48,7 @@ I would like to know which users have access to which transfer. Can you create t
 Output from Claude Desktop:
 
 
-![image info](images/FLOGO_MCP_MFT/Claude_auditResult1.png)
+![image info](images/FLOGO_MCP_MFT/Claude_AuditResult1.png)
 
 
 ![image info](images/FLOGO_MCP_MFT/ExcelResult_Claude.png)
