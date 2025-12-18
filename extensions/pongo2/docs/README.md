@@ -104,7 +104,7 @@ While pongo2 syntax is very similar to Jinja2, there are important differences:
 Copy the flogo plugin folder to the extensions folder and from vscode settings for flogo plugin mention this extension folder in extensions. Restart vscode
 
 # Or from repository and use flogobuild cli (if possible)
-github.com/kulbhushanbhalerao/flogo-extensions/pongo2
+github.com/TIBCOSoftware/flogo-enterprise-hub/extensions/pongo2
 ```
 
 ## Configuration
@@ -240,7 +240,7 @@ For issues, questions, or contributions:
 - **[❗ Troubleshooting Guide](TROUBLESHOOTING.md)** - Diagnose and fix common issues
 
 ### 📈 **Repository & Technologies**
-- **Repository**: https://github.com/KulbhushanBhalerao/flogo-extensions/tree/main/pongo2
+- **Repository**: https://github.com/TIBCOSoftware/flogo-enterprise-hub/tree/main/extensions/pongo2
 - **Technologies**: Go, TIBCO Flogo, Pongo2, Model Context Protocol, Claude Desktop
 - **Impact**: Transforms enterprise AI adoption through visual workflow integration
 

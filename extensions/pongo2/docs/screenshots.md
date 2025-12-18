@@ -49,7 +49,7 @@ Mapping flow variables to template variables using the auto-generated schema:
 ### Rendered Prompt Output
 The final rendered prompt ready to be sent to Claude:
 
-![Rendered Prompt Output](../images/Pongo2-activity-Output-rederedPrompt.png)
+![Rendered Prompt Output](../images/Pongo2-activity-Output-renderedPrompt.png)
 
 ## 🚀 Flow Execution
 

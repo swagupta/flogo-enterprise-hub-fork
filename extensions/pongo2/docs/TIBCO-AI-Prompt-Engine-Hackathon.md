@@ -58,6 +58,6 @@ Revolutionary **Visual Prompt Engineering** for TIBCO Flogo that transforms AI i
 
 **Technologies:** Golang, TIBCO Flogo, Pongo2 (simplified templates) 
 
-**Repository:** https://github.com/KulbhushanBhalerao/flogo-extensions/tree/main/pongo2  
+**Repository:** https://github.com/TIBCOSoftware/flogo-enterprise-hub/tree/main/extensions/pongo2  
 
 **Impact:** Transforms enterprise AI adoption through visual workflow integration
