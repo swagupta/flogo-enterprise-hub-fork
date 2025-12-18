@@ -1342,13 +1342,15 @@ May your journey be filled with as many discoveries as there are cobblestones in
 - `forloop.Last` - True for last iteration
 
 ### 5. Testing Your Templates
-Use the provided utility to test your templates:
+The pongo2 activity automatically detects variables in your templates and generates the appropriate JSON schema.
+
+To test template functionality:
 ```bash
-cd utils
-./generate_flogo_params.sh "Your template here"
+cd extensions/pongo2/src/activity/pongo2
+go test -v -run TestJinja2PromptActivity
 ```
 
-This will show you the variables detected and generate the JSON schema needed for Flogo Web UI.
+The schema provider will automatically detect variables and create input fields in the Flogo Web UI.
 
 
 {% endraw %}

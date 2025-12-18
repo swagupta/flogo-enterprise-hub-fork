@@ -6,37 +6,21 @@ layout: default
 
 ## 🎯 Quick Start
 
-Generate JSON schema for your Pongo2 template variables to use in Flogo Web UI.
+The pongo2 activity automatically generates JSON schema for template variables detected in your Pongo2 templates.
 
-### Method 1: Simplified Script (Recommended)
+### How It Works
 
-```bash
-cd /opt/tibco/flogo-extensions/pongo2-prompt/utils
-./generate_flogo_params.sh "Your template here"
-```
+1. **Automatic Detection**: When you enter a template in the activity settings, variables like `{{ variable_name }}` are automatically detected
+2. **Schema Generation**: The schema provider in `schema_provider.go` generates appropriate input fields
+3. **Dynamic Inputs**: These fields appear in the Flogo Web UI for mapping
 
-**Output:**
-```
-🎯 JSON Schema (copy this to Flogo Web UI):
-{"$schema":"http://json-schema.org/draft-04/schema#","properties":{...}}
-
-📋 Variables detected: role, domain, objective
-💡 For params type, add these parameters in Flogo Web UI:
-  - role
-  - domain  
-  - objective
-```
-
-### Method 2: Go Direct
+### Testing Schema Generation
 
 ```bash
-cd /opt/tibco/flogo-extensions/pongo2-prompt/utils  
-go run schema_generator.go "Your template here"
+# Test the schema generation functionality
+cd extensions/pongo2/src/activity/pongo2
+go test -v -run TestJSONSchemaGeneration
 ```
-
-### Method 3: Web Interface
-
-Open `utils/schema_generator.html` in your browser.
 
 ## 📋 Example Usage
 

@@ -38,11 +38,8 @@ WARN  - WARNING: Rendered output is empty!
 
 **Solution:**
 - Ensure all template variables (e.g., `{{ name }}`) have corresponding values in the `templateVariables` input
-- Use the schema generation utility to identify required variables:
-  ```bash
-  cd utils
-  ./generate_flogo_params.sh "Your template here"
-  ```
+- The activity automatically detects template variables - check the input mapping section in Flogo Web UI to ensure all detected variables are mapped correctly
+- Refer to the [JSON Schema Guide](JSON_SCHEMA_GUIDE.md) for details on how variables are detected
 
 #### B. Nil or Empty Variable Values
 **Symptoms:**
@@ -143,13 +140,12 @@ Ensure your activity is configured correctly:
 ### 6. Quick Verification Commands
 
 ```bash
-# Test template variable detection
-cd /opt/tibco/flogo-extensions/pongo2-prompt/utils
-./generate_flogo_params.sh "Your template content here"
-
 # Run unit tests to verify activity functionality
-cd /opt/tibco/flogo-extensions/pongo2-prompt
+cd extensions/pongo2/src/activity/pongo2
 go test -v -run TestJinja2PromptActivity
+
+# Test template variable detection and schema generation
+go test -v -run TestJSONSchemaGeneration
 
 # Test specific scenarios
 go test -v -run TestEmptyOutputScenarios

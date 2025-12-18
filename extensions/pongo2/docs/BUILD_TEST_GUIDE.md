@@ -10,7 +10,7 @@
 
 ### 1. Clone/Navigate to the Activity Directory
 ```bash
-cd /path/to/pongo2
+cd /path/to/flogo-enterprise-hub/extensions/pongo2/src/activity/pongo2
 ```
 
 ### 2. Initialize Go Modules (if not already done)
@@ -68,10 +68,11 @@ The activity is organized into separate files for better maintainability:
 
 - **`activity.go`** - Main activity logic and execution (`Eval` method)
 - **`metadata.go`** - Input/Output struct definitions with `ToMap`/`FromMap` methods
-- **`utils.go`** - Utility functions for template variable extraction and schema generation
+- **`schema_provider.go`** - Schema provider for dynamic input generation and utility functions
 - **`activity_test.go`** - Comprehensive test suite
 - **`user_template_test.go`** - User-provided template tests
-- **`schema_provider.go`** - Schema provider for dynamic input generation
+- **`conditional_test.go`** - Conditional logic tests
+- **`test_syntax.go`** - Template syntax tests
 - **`descriptor.json`** - Activity metadata and configuration
 
 ## Test Structure
@@ -131,14 +132,14 @@ if err != nil {
 
 ### Issue: Utility function not found
 **Error**: `undefined: extractTemplateVariables`
-**Solution**: Ensure `utils.go` is in the same package and functions are properly exported
+**Solution**: Utility functions are in `schema_provider.go`. Ensure all Go files are in the same package and functions are properly exported
 
 ## Development Workflow
 
 1. **Make changes** to relevant files:
    - `activity.go` - Main execution logic
    - `metadata.go` - Input/Output definitions
-   - `utils.go` - Utility functions
+   - `schema_provider.go` - Schema generation and utility functions
    - `descriptor.json` - Activity configuration
 2. **Run tests** with `go test -v`
 3. **Test specific functionality**:
@@ -157,9 +158,8 @@ The activity follows standard Flogo patterns with clean separation of concerns:
 ### File Organization
 - **Metadata Layer** (`metadata.go`): Defines Input/Output structs with proper serialization
 - **Business Logic** (`activity.go`): Core execution logic and Flogo integration
-- **Utility Layer** (`utils.go`): Template parsing and schema generation functions
-- **Schema Provider** (`schema_provider.go`): Dynamic input field generation
-- **Tests** (`*_test.go`): Comprehensive test coverage (51.6% coverage)
+- **Schema Provider** (`schema_provider.go`): Template parsing, schema generation, and utility functions
+- **Tests** (`*_test.go`): Comprehensive test coverage including conditional, syntax, and user template tests
 
 ### Benefits of This Architecture
 - **Maintainability**: Easy to modify each layer independently
@@ -187,8 +187,8 @@ jobs:
       run: go test -v ./...
     - name: Test coverage
       run: go test -v -cover
-    - name: Test schema utilities
-      run: cd utils && ./generate_flogo_params.sh "Hello {{ name }}"
+    - name: Test schema generation
+      run: go test -v -run TestJSONSchemaGeneration
     - name: Build
       run: go build .
 ```
@@ -211,40 +211,30 @@ go test -memprofile=mem.prof -bench=.
 go tool pprof mem.prof
 ```
 
-## Schema Generation Utilities
+## Schema Generation Testing
 
-The activity includes utilities for generating JSON schemas from templates:
+The activity includes schema generation capabilities in `schema_provider.go`:
 
-### 1. Test Schema Generation
+### Test Schema Generation
 ```bash
-cd utils
-go run schema_generator.go "Hello {{ name }}, you are {{ age }} years old"
-```
-
-### 2. Use the Shell Script (with auto Go installation)
-```bash
-cd utils
-./generate_flogo_params.sh "Hello {{ name }}, you are {{ age }} years old"
-```
-
-### 3. Testing Utility Functions
-```bash
-# Test template variable extraction
+# Test template variable extraction and schema generation
 go test -v -run TestJSONSchemaGeneration
 
-# Test utility functions directly
-go test -v utils.go activity_test.go
+# Test all schema-related functionality
+go test -v -run TestTemplateVariablesInput
 ```
+
+For details on how schemas are generated, refer to the [JSON Schema Guide](JSON_SCHEMA_GUIDE.md).
 
 ## Distribution
 
 ### Package for Distribution
 ```bash
-# Create distribution package (includes all source files)
-tar -czf pongo2-v1.0.0.tar.gz *.go descriptor.json go.mod go.sum *.md utils/
+# Create distribution package (from src/activity/pongo2 directory)
+tar -czf pongo2-v1.0.0.tar.gz *.go descriptor.json go.mod go.sum build.sh
 
-# Create zip for Windows
-zip -r pongo2-v1.0.0.zip *.go descriptor.json go.mod go.sum *.md utils/
+# Create zip for Windows (from src/activity/pongo2 directory)
+zip -r pongo2-v1.0.0.zip *.go descriptor.json go.mod go.sum build.sh
 ```
 
 ### Publish as Go Module (Optional)

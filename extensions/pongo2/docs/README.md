@@ -117,11 +117,9 @@ github.com/TIBCOSoftware/flogo-enterprise-hub/extensions/pongo2
     `"Hello {{ name }}! Please analyze {{ data }} and provide results in {{ format }} format."`
 
 2. **JSON Schema generation** (object): 
-   - Use script: /utils-pongo2-json/generate_flogo_params.sh and pass the template as a string in double quotes 
-   ```bash
-   ./generate_flogo_params.sh "Hello {{ name }}! Please analyze {{ data }} and provide results in {{ format }} format."
-   ```
-   - Use generated json schema from variables inside the templates. Note: For now use flat json structure in case it generates nested structure 
+   - Individual fields are created for each variable detected in your template
+   - Refer to [JSON Schema Guide](JSON_SCHEMA_GUIDE.md) for details on schema generation
+   - Use flat json structure for template variables 
    - Individual fields are created for each variable detected in your template
    - Each field can be mapped to different data sources in your flow
    - Schema-based approach ensures proper field generation in Flogo Web UI
@@ -236,11 +234,10 @@ For issues, questions, or contributions:
 - **[🎮 Pongo2 Examples](PONGO2_EXAMPLES.md)** - Comprehensive template examples with sample data
 - **[📋 JSON Schema Guide](JSON_SCHEMA_GUIDE.md)** - Auto-generate schemas for template variables
 - **[🔧 Build & Test Guide](BUILD_TEST_GUIDE.md)** - Development, testing, and deployment
-- **[🚀 Flogo Integration Guide](FLOGO_INTEGRATION_GUIDE.md)** - Step-by-step integration in Flogo flows
 - **[❗ Troubleshooting Guide](TROUBLESHOOTING.md)** - Diagnose and fix common issues
 
 ### 📈 **Repository & Technologies**
-- **Repository**: https://github.com/TIBCOSoftware/flogo-enterprise-hub/tree/main/extensions/pongo2
+- **Repository**: https://github.com/TIBCOSoftware/flogo-enterprise-hub/tree/master/extensions/pongo2
 - **Technologies**: Go, TIBCO Flogo, Pongo2, Model Context Protocol, Claude Desktop
 - **Impact**: Transforms enterprise AI adoption through visual workflow integration
 
