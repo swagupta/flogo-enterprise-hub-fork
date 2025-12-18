@@ -4,7 +4,7 @@
 
 ## 🎯 Executive Summary
 
-Revolutionary **Visual Prompt Engineering** for TIBCO Flogo that transforms AI integration. Combines **Flogo MCP Trigger**, **Flogo workflow**, and **Pongo2 templates** to let enterprises design intelligent, conditional AI prompts through familiar drag-and-drop interfaces. Uses the power of conditional templating using pongo2 syntax to build even custom prompts for AI Agents.
+Revolutionary **Visual Prompt Engineering** for TIBCO Flogo that transforms AI integration. Combines **Flogo MCP Trigger**, **Flogo workflow**, and **Pongo2 templates** to let enterprises design intelligent, conditional AI prompts through familiar drag-and-drop interfaces. Uses the power of conditional templating using pongo2 syntax to build custom prompts for AI Agents.
 
 ## 💼 Business Impact
 
