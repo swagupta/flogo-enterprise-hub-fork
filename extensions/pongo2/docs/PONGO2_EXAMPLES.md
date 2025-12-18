@@ -1,8 +1,3 @@
----
-layout: default
----
-
-{% raw %}
 # Pongo2 Template Examples
 
 This document provides practical examples of pongo2 templates with sample variable values and their expected outputs. Use these examples to understand pongo2 syntax and test the activity.
@@ -1351,6 +1346,3 @@ go test -v -run TestJinja2PromptActivity
 ```
 
 The schema provider will automatically detect variables and create input fields in the Flogo Web UI.
-
-
-{% endraw %}

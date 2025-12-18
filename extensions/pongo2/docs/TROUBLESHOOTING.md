@@ -1,8 +1,3 @@
----
-layout: default
----
-
-{% raw %}
 # Troubleshooting Empty Output Issue
 
 ## Issue Description
@@ -178,4 +173,4 @@ If you're still getting empty output after checking all the above:
 4. **Verify Input Data**: Log the input data before it reaches the activity
 5. **Check Output Mapping**: Verify how the output is being used after the activity
 
-The enhanced logging should provide clear indicators of where the issue lies in the template processing pipeline.{% endraw %}
+The enhanced logging should provide clear indicators of where the issue lies in the template processing pipeline.

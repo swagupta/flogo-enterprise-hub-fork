@@ -1,8 +1,3 @@
----
-layout: default
----
-
-{% raw %}
 # AI-Powered Visual Prompt Engine for TIBCO Flogo
 
 **The world's first enterprise workflow platform with native AI prompt engineering capabilities**
@@ -243,4 +238,4 @@ For issues, questions, or contributions:
 
 ---
 
-**Note**: This solution revolutionizes AI integration by making prompt engineering visual and accessible to business users through familiar TIBCO tools, while maintaining enterprise-grade security and governance.{% endraw %}
+**Note**: This solution revolutionizes AI integration by making prompt engineering visual and accessible to business users through familiar TIBCO tools, while maintaining enterprise-grade security and governance.
