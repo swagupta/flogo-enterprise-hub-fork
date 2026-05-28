@@ -102,6 +102,14 @@ With built-in support for LLM connections, agent triggers, agent invocation, and
 ![image info](images/Flogo5.png)
 
 
+#### Set the endpoint visibility to public
+
+After deployment in TIBCO Platform, you have to change the endpoint visibility to public, so the Webhook trigger of the AI Agent can be called by the TIBCO Platform Alert Manager.
+
+![image info](images/Run2.png)
+
+>Note: After changing the endpoint visibility make sure to update the Alert Receiver definition in the TIBCO Control Plane.
+
 ### Running the scenario
 
 
