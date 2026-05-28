@@ -10,7 +10,7 @@ This demo showcases how Flogo AI Agent Activity can assist you in problem determ
  **In this demonstration, we build an **Autonomous AI agent** using the Flogo AI Agent activity. 
  It illustrates how the MCP services of TIBCO Platform can be used as **Tools**.** And work together to connect AI models (like Claude or OpenAI model) in the Agentic context.
 
-![image info](/images/AI_Alert_Agent.png)
+![image info](images/AI_Alert_Agent.png)
 
 The scenario starts in TIBCO Platform, where the Alerts configuration is used to monitor error situations on Flogo applications deployed in platform. When the alert conditions are met, the TIBCO Platform will send an alert to the AI Agent for further error investigation. For communication the newly introduced Webhook support from platform version 1.17 is used to communicate to the Flogo AI Agent. 
 
