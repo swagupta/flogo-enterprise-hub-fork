@@ -14,18 +14,24 @@ This demo showcases how Flogo AI Agent Activity can assist you in problem determ
 
 The scenario starts in TIBCO Platform, where the Alerts configuration is used to monitor error situations on Flogo applications deployed in platform. When the alert conditions are met, the TIBCO Platform will send an alert to the AI Agent for further error investigation. For communication the newly introduced Webhook support from platform version 1.17 is used to communicate to the Flogo AI Agent. 
 
-The **TIBCO Platform MCP services** helping the autonomous AI Agent to collect relevant data on the erroneous application. The AI Agent Reports back its findings in logged response.
+The **TIBCO Platform MCP services** support the autonomous AI Agent to collect relevant data on the erroneous application. The AI Agent Reports back its findings in logged response.
 This is done by a multi step approach fed into the user prompt of the AI Agent.
 
 ```
 Perform the following steps to work to an answer:  
 
 Step 1: From the received email. Determine the  application name and 'affected DP' data plane name that has produced the error from the alert message.
+
 Step 2: Find the application in the 'Affected DP' data plane and determine the dataplaneid that runs this application. Retrieve the 'application name' from the alert message.
+
 Step 3: Determine via the right tool if the 'applicationId' in the 'dataplaneId'  is a 'FLOGO', 'BWCE' or a 'BW5CE' application type.
+
 Step 4: Determine the application runtime status of the faulty application with the 'applicationId'.
+
 Step 5: Gather all other application information that can be found using the tools on 'applicationId' and 'data-plane-id' 
+
 Step 6: Try to find the error in the Observability and trace information of this application with the 'applicationId' and 'data-plane-id'. 
+
 Create a nice overview of all relevant data from the application causing the error notification. Summarize in plain text, show these details in the summary: 'Alert name', 'Alert Description', 'Event Type', 'Value', 'Timestamp', 'Affected DP', 'DataplaneId', 'Capability Type', 'Affected app', 'Runtime Status of the Affected app', 'Alert message'.
 ```
 
@@ -64,9 +70,9 @@ This Alert will be evaluated every 5 minutes. When the Alert Rule is evaluated t
 
 MCP (Model Context Protocol) is an open-source standard for connecting AI applications to external systems. TIBCO® Control Plane MCP server connects AI applications to TIBCO Control Plane. This gives AI applications the ability to process TIBCO Control Plane, data plane, and capabilities data by using natural language interactions.
 
-The Tools provided by the TIBCO Platform MCP Servers are called by the AI Agent for collecting relevant information when reasoning and executing the AI-Prompts. 
+The Tools provided by the TIBCO Platform MCP Servers are called by the AI Agent for collecting relevant information when reasoning and executing the AI-Prompt to investigate the received error alert. 
 
-In the TIBCO platform these MCP Servers should be enabled in the TIBCO Control Plane -> Settings - MCP Servers.
+In the TIBCO platform these MCP Servers should be enabled in the TIBCO Control Plane -> Settings - MCP Servers. TIBCO applies an AI enable policy, where you need to opt-in for AI related services.
 
 
 ![image info](images/MCP1.png)
@@ -77,41 +83,80 @@ The new TIBCO Flogo® Connector for Agentic AI - Tech Preview enables developer
   
 With built-in support for LLM connections, agent triggers, agent invocation, and tool integrations, the connector empowers you to design both orchestration agents and domain-specific agents that can autonomously coordinate tasks, retrieve data, and make contextual decisions.
 
+The core of the Agentic AI part of this Error Alert scenario is build in the Flogo flow: AI_PlatformAlertAgent, which is also available in the source folder.
+
 ![image info](images/Flogo1.png)
 
-#### Connections
+#### Connection definitions
 
 ![image info](images/Flogo2.png)
 
-|Connection     |  Connection Type    |
-| --- | --- |
-| Open AI | LLM Provider Connection     |
-| Control Plane MCP Server | MCP Server Connection |
+| Connection               | Connection Type         |
+| ------------------------ | ----------------------- |
+| Open AI                  | LLM Provider Connection |
+| TIBCO® Control Plane Model Context Protocol (MCP) Server | MCP Server Connection   |
+| TIBCO Flogo® Model Context Protocol (MCP) Server         | MCP Server Connection   |
+
+##### LLM Provider Connection (Preview) 
+
+For the reasoning of the AI Agent a connection to a LLM is needed. In this example a connection to OpenAI is configured. The authentication is done via an API Key of OpenAI.
+
+![image info](images/Flogo7.png)
+
+Settings for the actual AI usage are configured on the activity level of the *AI Agentic Activity*, where maximum number of tokens, iterations and temperature settings are configurable.
+
+##### TIBCO® Control Plane Model Context Protocol (MCP) Server
+
+The connection settings for the TIBCO Platform MCP Servers can be obtained via the [TIBCO Platform documentation](https://docs.tibco.com/pub/platform-cp/1.17.0/doc/html/Default.htm#UserGuide/mcp-server.htm?TocPath=_____9)
+
+For authentication it is needed to create a OAuth Token via the "Settings"->"Oauth Token" navigation path in the TIBCO Control Plane.
+
+![image info](images/CP1.png)
+
+When all information is collected, the Connection information can be entered and a selection of available MCP tools can be made. In our scenario we selected all available tools to participate.
+ 
+![image info](images/Flogo6.png)
 
 #### Webhook Trigger 
 
+The Webhook trigger is used to receive the alert message from the TIBCO Platform Alert Manager.
+The trigger is based on a HTTP Trigger activity in Flogo with a specific context path defined. In our scenario that is defined as: **/alerts/flogo**
 
 ![image info](images/Flogo4.png)
 
+The input definition is based on the TIBCO Platform alert schema that can be found in the [ [Webhook documentation](https://docs.tibco.com/pub/platform-cp/1.17.0/doc/html/Default.htm#UserGuide/configuring-webhook-receiver.htm?TocPath=Monitoring%257CAlerts%2520and%2520Notifications%257C_____2). 
 
 #### AI Agentic Activity
 
 
 ![image info](images/Flogo3.png)
 
+The actual instructions for the AI Agent to perform its job, are mapped into the user prompt entry in the Activity Input data. This user prompt corresponds to the 6-step instruction that is described in the introduction of this article.
+
 ![image info](images/Flogo5.png)
 
+#### Result considerations
 
-#### Set the endpoint visibility to public
+In this AI Platform Alert Agent the result of the AI investigation of the error alert is shared via a Log Message in the Flogo Log. This was chosen deliberate to keep the scenario simple and comprehensive.
+
+This is an arbitrary design decision. The gathered information from the MCP Servers can also be used to triage the alerts and determine proper next actions based on the extra information found.
+
+Since the AI Agent runs in the Flogo context any activity of call can be made to take the proper action for a specific platform alert message.
+
+### Deployment of the AI Agent.
+
+The AI Agent can run as a local Flogo Application in your VS Code environment as well as in the TIBCO Platform 1.17 onwards releases. When the local environment option is used, the AI Agent can be triggered by sending the event data manually via a REST Client.
+
+For deploying the Agent into the TIBCO platform, you need to make sure that the Webhook trigger is visible outside the data plane. In order to do that the endpoint visibility should be altered from private to public.
+#### TIBCO Platform: set the endpoint visibility to public
 
 After deployment in TIBCO Platform, you have to change the endpoint visibility to public, so the Webhook trigger of the AI Agent can be called by the TIBCO Platform Alert Manager.
 
 ![image info](images/Run2.png)
 
->Note: After changing the endpoint visibility make sure to update the Alert Receiver definition in the TIBCO Control Plane.
+>Note: After changing the endpoint visibility make sure to update the Alert Receiver definition in the TIBCO Control Plane. The Alert Manager will try to push the alert message towards the AI Agent endpoint, including the context path definition.
 
 ### Running the scenario
-
 
 #### Running using the Platform event trigger
 
@@ -366,6 +411,8 @@ https://flogo.mle.atsnl-emea.azure.dataplanes.pro/tibco/apps/errorAlertTrigger/R
 
 Although the app is currently running, the alert indicates it produced runtime faults. OpenTelemetry tracing is enabled, and log level is set to ERROR, but execution history is disabled. Further analysis should be performed in Observability using the application ID, pod name, namespace, and alert timestamp.
 ```
+
+
 
 
 ### The materials to setup this demo is available on GitHub:  
