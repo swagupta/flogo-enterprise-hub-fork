@@ -228,7 +228,7 @@
     {
       "name": "AgenticAI.OpenAI.API_Key",
       "type": "string",
-      "value": "SECRET:MRhQi4CNMCstfzACnTh9qZr9hzZfCdhoCx1fzEtH5HM02g9BbndLKwjIaUupz+YjL0Lp5bDzhS/jnIK0G8qsQjOxMDAsZf+t/OZmfjwKgAmYNXIplfrQA/nSwaa9A7rZh0ff6yijiIjLgc5LS3EmpNw8CET+6txE4OS2Bk8IRG1UCVbi19ZWolFppFOkAFkthTCpEjq3AFUt9yakGPbTBoWmXXUIVO4LJjSyCiGG/2j1TM8c"
+      "value": "SECRET:YOURKEY"
     },
     {
       "name": "AgenticAI.OpenAI.LLM_Base_URL",
@@ -261,7 +261,7 @@
         "description": "Claude Connection",
         "llmProvider": "Anthropic",
         "anthropicProvider": "Default",
-        "apiKey": "SECRET:No6AAO5ymBHyco3UnaOfFhKEeegjef6fj4MSoZuvMKu1E6YG1WpKzupot7p6LR9PVt3hIWihABoTjFu5b3zhKMNROZ/geVdsKXNMYfz/EeHV6EJygDNrm46yVXpdanC/rT6+IgZnR0uChNcX7VCKBra+FkrC8oPrNjCF0w==",
+        "apiKey": "SECRET:YOURKEY",
         "llmProviderUrl": "https://api.anthropic.com"
       }
     },
@@ -277,7 +277,7 @@
         "serverUrl": "https://tibcoatseuwe1.eu-west.my.tibco.com/cp/mcp",
         "httpTransportType": "streamable",
         "authType": "Token",
-        "authToken": "SECRET:V7nU04p4Ew2BcTlPbqPiuNNiD50K3L7qF+Z/q/bJ+iC6mUnBtebTgrNFZn4=",
+        "authToken": "SECRET:YOURKEY",
         "selectedTools": [
           "createActivationServer",
           "createAlertRule",
@@ -315,7 +315,7 @@
         "serverUrl": "https://tibcoatseuwe1.eu-west.my.tibco.com/flogo/mcp",
         "httpTransportType": "streamable",
         "authType": "Token",
-        "authToken": "SECRET:udACiseyFtLz4VcveLn/E2qMUqcDNG58ejcY9g2p/Z5it/iczB/VLKaDyb8=",
+        "authToken": "SECRET:YOURKEY",
         "selectedTools": [
           "flogo_get_app_details",
           "flogo_get_app_endpoints",
