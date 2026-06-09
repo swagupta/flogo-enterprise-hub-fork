@@ -8,7 +8,7 @@ Ready-to-run sample applications for **TIBCO Flogo®** — the low-code / no-cod
 
 | Category | Description |
 |----------|-------------|
-| [Agentic AI](./Agentic_AI/) | AI-powered agents with custom guardrails, multi-agent handoff, MCP server integration, and incident triage |
+| [Agentic AI](./Agentic_AI/) | AI-powered agents with custom guardrails, multi-agent handoff, MCP server integration, A2A (Agent-to-Agent) protocol, LLM Client Activity, and incident triage |
 | [Model Context Protocol (MCP)](./Model_Context_Protocol(MCP)/) | MCP servers exposing business data as AI-accessible tools — stateless, stateful, authenticated, annotated, and advanced primitives |
 | [Flogo Core & Connector Samples](./VSCode_Extension/) | API development (REST, gRPC, GraphQL), enterprise connectors, flow design concepts, mapping, and unit testing |
 | [TIBCO Control Plane](./Tibco_Control_Plane/) | Custom Docker image deployment and TLS ingress configuration for TIBCO Platform |
