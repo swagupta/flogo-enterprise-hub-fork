@@ -81,21 +81,21 @@
           {
             "id": 1,
             "from": "StartActivity",
-            "to": "Log_Email",
+            "to": "Log_Alert",
             "type": "label",
             "label": "StartActivity to Log_Email"
           },
           {
             "id": 2,
-            "from": "Log_Email",
-            "to": "AIAgent_Preview",
+            "from": "Log_Alert",
+            "to": "AI_Agent",
             "type": "label",
             "label": "LogMessage1 to AIAgent_Preview"
           },
           {
             "id": 3,
-            "from": "AIAgent_Preview",
-            "to": "LogMessage",
+            "from": "AI_Agent",
+            "to": "Log_AgentResult",
             "type": "label",
             "label": "AIAgent_Preview to LogMessage"
           }
@@ -110,22 +110,22 @@
             }
           },
           {
-            "id": "Log_Email",
-            "name": "Log_Email",
+            "id": "Log_Alert",
+            "name": "Log_Alert",
             "description": "Simple Log Message Activity",
             "activity": {
               "ref": "#log",
               "input": {
                 "Log Level": "INFO",
                 "flowInfo": false,
-                "message": "=\"Alert Body received: \"+$flow.content.alerts[0].alertDescription",
+                "message": "=\"Alert Body received: \"+$flow.content.alerts[0]",
                 "logLevel": ""
               }
             }
           },
           {
-            "id": "AIAgent_Preview",
-            "name": "AIAgent_Preview",
+            "id": "AI_Agent",
+            "name": "AI_Agent",
             "description": "Configure AI Agent in the flow. This functionality is in preview stage and not recommended for production use.",
             "activity": {
               "ref": "#agentactivity",
@@ -146,7 +146,7 @@
                 ],
                 "conversationStoreType": "Memory",
                 "memoryMaxSize": 10,
-                "systemPrompt": "\"You are a helpful assistant\""
+                "systemPrompt": "You are a helpful assistant"
               },
               "input": {
                 "userPrompt": "=\"Perform the following steps to work to an answer: \"+ \r\n\"Step 1: From the received email. Determine the  application name and 'affected DP' data plane name that has produced the error from the\" + coerce.toString($flow.content.alerts[0]) +\r\n\"Step 2: Find the application in the 'Affected DP' data plane and determine the dataplaneid that runs this application. Retrieve the 'application name' from the\" + coerce.toString($flow.content.alerts[0]) +\r\n\"Step 3: Determine via the right tool if the 'applicationId' in the 'dataplaneId'  is a 'FLOGO', 'BWCE' or a 'BW5CE' application type.\" +\r\n\"Step 4: Determine the application runtime status of the faulty application with the 'applicationId'.\" +\r\n\"Step 5: Gather all other application information that can be found using the tools on 'applicationId' and 'data-plane-id' \" +\r\n\"Step 6: Try to find the error in the Observability and trace information of this application with the 'applicationId' and 'data-plane-id' \" +\r\n\"Create a nice overview of all relevant data from the application causing the error notification. Summarize in plain text, show these details in the summary: 'Alert name', 'Alert Description', 'Event Type', 'Value', 'Timestamp', 'Affected DP', 'DataplaneId', 'Capability Type', 'Affected app', 'Runtime Status of the Affected app', 'Alert message'.\"",
@@ -165,21 +165,21 @@
             }
           },
           {
-            "id": "LogMessage",
-            "name": "LogMessage",
+            "id": "Log_AgentResult",
+            "name": "Log_AgentResult",
             "description": "Simple Log Message Activity",
             "activity": {
               "ref": "#log",
               "input": {
                 "Log Level": "INFO",
                 "flowInfo": false,
-                "message": "=\"Email Received\"+ $activity[AIAgent_Preview].response",
+                "message": "=\"Email Received\"+ $activity[AI_Agent].response",
                 "logLevel": ""
               }
             }
           }
         ],
-        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjM0LCJ5IjoxNDZ9LCJMb2dfRW1haWwiOnsieCI6MTk3LCJ5IjoxMzV9LCJBSUFnZW50X1ByZXZpZXciOnsieCI6NDEwLCJ5IjoxMzV9LCJMb2dNZXNzYWdlIjp7IngiOjYzNywieSI6MTMzfX0=",
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjM0LCJ5IjoxNDZ9LCJMb2dfQWxlcnQiOnsieCI6MTk3LCJ5IjoxMzV9LCJBSV9BZ2VudCI6eyJ4Ijo0MTAsInkiOjEzNX0sIkxvZ19BZ2VudFJlc3VsdCI6eyJ4Ijo2MzcsInkiOjEzM319",
         "metadata": {
           "input": [
             {
@@ -228,7 +228,7 @@
     {
       "name": "AgenticAI.OpenAI.API_Key",
       "type": "string",
-      "value": "SECRET:YOURKEY"
+      "value": "SECRET:MRhQi4CNMCstfzACnTh9qZr9hzZfCdhoCx1fzEtH5HM02g9BbndLKwjIaUupz+YjL0Lp5bDzhS/jnIK0G8qsQjOxMDAsZf+t/OZmfjwKgAmYNXIplfrQA/nSwaa9A7rZh0ff6yijiIjLgc5LS3EmpNw8CET+6txE4OS2Bk8IRG1UCVbi19ZWolFppFOkAFkthTCpEjq3AFUt9yakGPbTBoWmXXUIVO4LJjSyCiGG/2j1TM8c"
     },
     {
       "name": "AgenticAI.OpenAI.LLM_Base_URL",
@@ -261,7 +261,7 @@
         "description": "Claude Connection",
         "llmProvider": "Anthropic",
         "anthropicProvider": "Default",
-        "apiKey": "SECRET:YOURKEY",
+        "apiKey": "SECRET:No6AAO5ymBHyco3UnaOfFhKEeegjef6fj4MSoZuvMKu1E6YG1WpKzupot7p6LR9PVt3hIWihABoTjFu5b3zhKMNROZ/geVdsKXNMYfz/EeHV6EJygDNrm46yVXpdanC/rT6+IgZnR0uChNcX7VCKBra+FkrC8oPrNjCF0w==",
         "llmProviderUrl": "https://api.anthropic.com"
       }
     },
@@ -277,7 +277,7 @@
         "serverUrl": "https://tibcoatseuwe1.eu-west.my.tibco.com/cp/mcp",
         "httpTransportType": "streamable",
         "authType": "Token",
-        "authToken": "SECRET:YOURTOKEN",
+        "authToken": "SECRET:V7nU04p4Ew2BcTlPbqPiuNNiD50K3L7qF+Z/q/bJ+iC6mUnBtebTgrNFZn4=",
         "selectedTools": [
           "createActivationServer",
           "createAlertRule",
@@ -315,8 +315,24 @@
         "serverUrl": "https://tibcoatseuwe1.eu-west.my.tibco.com/flogo/mcp",
         "httpTransportType": "streamable",
         "authType": "Token",
-        "authToken": "SECRET:YOURTOKEN",
-        "selectedTools": ""
+        "authToken": "SECRET:udACiseyFtLz4VcveLn/E2qMUqcDNG58ejcY9g2p/Z5it/iczB/VLKaDyb8=",
+        "selectedTools": [
+          "flogo_get_app_details",
+          "flogo_get_app_endpoints",
+          "flogo_get_app_instances",
+          "flogo_get_apps_deployed_for_build",
+          "flogo_get_capability_info",
+          "flogo_get_provisioned_flogo_versions",
+          "flogo_list_app_builds",
+          "flogo_list_connectors",
+          "flogo_list_connectors_from_controlplane",
+          "flogo_list_namespaces",
+          "flogo_list_supplements",
+          "flogo_list_versions_from_control_plane",
+          "flogo_provision_connector",
+          "flogo_provision_flogo_version",
+          "flogo_get_all_capability_summary"
+        ]
       }
     }
   },
