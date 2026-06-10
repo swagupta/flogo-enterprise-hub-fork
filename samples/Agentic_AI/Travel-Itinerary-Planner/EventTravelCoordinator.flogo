@@ -521,7 +521,7 @@
     {
       "name": "AgenticAI.openai.API_Key",
       "type": "string",
-      "value": ""
+      "value": "SECRET:uiLcckwfDC09Q3YrnxO73LDsJw=="
     },
     {
       "name": "AgenticAI.openai.LLM_Base_URL",

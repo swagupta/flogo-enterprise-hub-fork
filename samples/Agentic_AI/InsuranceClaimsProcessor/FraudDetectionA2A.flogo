@@ -23,7 +23,7 @@
         "agentName": "=$property[\"Trigger_Settings.AgentName\"]",
         "agentDescription": "=$property[\"Trigger_Settings.AgentDescription\"]",
         "agentType": "A2A Server",
-        "agentPort": "9604",
+        "agentPort": "=$property[\"A2A.ServerPort\"]",
         "agentUrl": "=$property[\"A2A.AgentUrl\"]",
         "agentAuthMode": "Static Token",
         "agentToken": "=$property[\"A2A.AuthToken\"]",
@@ -310,7 +310,7 @@
     {
       "name": "AgenticAI.openai.API_Key",
       "type": "string",
-      "value": ""
+      "value": "SECRET:5kHBbgul6g6biPDbncrWe4xwoA=="
     },
     {
       "name": "AgenticAI.openai.LLM_Base_URL",
@@ -355,7 +355,7 @@
     {
       "name": "A2A.AuthToken",
       "type": "string",
-      "value": ""
+      "value": "SECRET:nv2GNaPVo2VCCvMl+hUCrZuQcw=="
     },
     {
       "name": "A2A.ServerPort",

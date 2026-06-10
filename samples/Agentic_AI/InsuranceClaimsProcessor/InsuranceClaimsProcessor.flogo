@@ -297,7 +297,7 @@
     {
       "name": "LLMClient.openai.API_Key",
       "type": "string",
-      "value": ""
+      "value": "SECRET:s7ZOBR94HdaEs70sEZgZVe/TOw=="
     },
     {
       "name": "LLMClient.openai.LLM_Model",
@@ -327,12 +327,12 @@
     {
       "name": "LLMClient.A2A.Fraud.Auth_Token",
       "type": "string",
-      "value": ""
+      "value": "SECRET:liqGq2mYSb1VGi6xRTvOL1w8dg=="
     },
     {
       "name": "LLMClient.MCP.Policy.JWT_Token",
       "type": "string",
-      "value": ""
+      "value": "SECRET:pFmNMDD0TBxGiyo5CKYDOnW9cA=="
     }
   ],
   "connections": {

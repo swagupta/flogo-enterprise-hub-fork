@@ -296,11 +296,11 @@ curl http://localhost:9898/.well-known/agent.json
 
 Open `EventTravelCoordinator.flogo`. In the **App Properties**, set:
 
-```
+~~~
 AgenticAI.openai.API_Key = sk-your-key-here
-A2A.ServerUrl = http://localhost:9898
-A2A.AuthToken = (same token configured on the A2A Server)
-```
+~~~
+
+If you enabled authentication on the A2A Server, update the `TravelPlannerA2A` connection in `EventTravelCoordinator.flogo` to set the A2A `serverUrl` and `authToken` accordingly.
 
 ### Step 4 — Start the Event Travel Coordinator
 
