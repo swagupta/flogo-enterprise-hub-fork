@@ -330,7 +330,7 @@
               "type": "object",
               "schema": {
                 "type": "json",
-                "value": "{\"policy_number\":{\"type\":\"string\"},\"claim_type\":{\"type\":\"string\"}}"
+                "value": "{\"policy_number\":{\"type\":\"string\",\"description\":\"The insurance policy number\"},\"claim_type\":{\"type\":\"string\",\"description\":\"Type of claim to check coverage for (e.g. collision, theft, medical, property_damage, liability, natural_disaster)\"}}"
               }
             },
             {
@@ -346,7 +346,7 @@
               "type": "object",
               "schema": {
                 "type": "json",
-                "value": "{\"scopes\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"expiration\":{\"type\":\"number\"},\"iss\":{\"type\":\"string\"},\"sub\":{\"type\":\"string\"},\"aud\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"name\":{\"type\":\"string\"},\"email\":{\"type\":\"string\"}}"
+                "value": "{\"scopes\":{\"type\":\"array\",\"items\":[{\"type\":\"string\"}]},\"expiration\":{\"type\":\"number\"}}"
               }
             }
           ],
@@ -358,19 +358,11 @@
                 "type": "json",
                 "value": "{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}"
               }
-            },
-            {
-              "name": "structuredContent",
-              "type": "object",
-              "schema": {
-                "type": "json",
-                "value": "{\"policyNumber\":{\"type\":\"string\"},\"claimType\":{\"type\":\"string\"},\"coverageStatus\":{\"type\":\"string\"},\"coverageLimit\":{\"type\":\"number\"},\"deductible\":{\"type\":\"number\"},\"coPayPercentage\":{\"type\":\"number\"},\"priorAuthorization\":{\"type\":\"boolean\"},\"estimatedProcessingDays\":{\"type\":\"integer\"}}"
-              }
             }
           ],
           "fe_metadata": {
-            "input": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"arguments\":{\"type\":\"object\",\"properties\":{\"policy_number\":{\"type\":\"string\"},\"claim_type\":{\"type\":\"string\"}}},\"httpHeaders\":{\"type\":\"object\",\"properties\":{\"Authorization\":{\"type\":\"string\"}}},\"tokenInfo\":{\"type\":\"object\",\"properties\":{\"scopes\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"expiration\":{\"type\":\"number\"},\"iss\":{\"type\":\"string\"},\"sub\":{\"type\":\"string\"},\"aud\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"name\":{\"type\":\"string\"},\"email\":{\"type\":\"string\"}}}}}",
-            "output": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"response\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}},\"structuredContent\":{\"type\":\"object\",\"properties\":{\"policyNumber\":{\"type\":\"string\"},\"claimType\":{\"type\":\"string\"},\"coverageStatus\":{\"type\":\"string\"},\"coverageLimit\":{\"type\":\"number\"},\"deductible\":{\"type\":\"number\"},\"coPayPercentage\":{\"type\":\"number\"},\"priorAuthorization\":{\"type\":\"boolean\"},\"estimatedProcessingDays\":{\"type\":\"integer\"}}}}}"
+            "input": "{\"type\":\"object\",\"title\":\"PolicyLookupMCPServer\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"policy_number\":{\"type\":\"string\",\"description\":\"The insurance policy number\"},\"claim_type\":{\"type\":\"string\",\"description\":\"Type of claim to check coverage for (e.g. collision, theft, medical, property_damage, liability, natural_disaster)\"}},\"required\":[\"policy_number\",\"claim_type\"],\"additionalProperties\":false},\"httpHeaders\":{\"type\":\"object\",\"properties\":{\"Authorization\":{\"type\":\"string\"}}},\"tokenInfo\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"scopes\":{\"type\":\"array\",\"items\":[{\"type\":\"string\"}]},\"expiration\":{\"type\":\"number\"}}}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"response\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}}},\"required\":[\"response\"]}"
           }
         }
       }
@@ -385,7 +377,7 @@
     {
       "name": "FlogoMcpServer.JWT_Secret",
       "type": "string",
-      "value": "SECRET:C+OyYQjDik0eiMheARX3qahHow=="
+      "value": "SECRET:W6nqAM4BOLCJFl6eqNe3E+5vgA=="
     }
   ],
   "connections": {},
