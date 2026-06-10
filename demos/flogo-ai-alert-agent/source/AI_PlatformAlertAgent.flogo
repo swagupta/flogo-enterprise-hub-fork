@@ -1,0 +1,351 @@
+{
+  "imports": [
+    "github.com/project-flogo/flow",
+    "github.com/project-flogo/contrib/activity/noop",
+    "github.com/tibco/flogo-general/src/app/General/activity/log",
+    "github.com/tibco/flogo-ai-agent/src/app/AgenticAI/activity/agentactivity",
+    "github.com/tibco/wi-plugins/contributions/http/src/app/HTTP/trigger/server",
+    "github.com/project-flogo/contrib/function/array",
+    "github.com/project-flogo/contrib/function/coerce",
+    "github.com/tibco/flogo-ai-agent/src/app/AgenticAI/connector/llmprovider",
+    "github.com/tibco/flogo-ai-agent/src/app/AgenticAI/connector/mcpserverconfig"
+  ],
+  "name": "AI_PlatformAlertAgent",
+  "description": "Autonomous AI Agent investigating platform alerts with MCP Servers",
+  "version": "1.0.1",
+  "type": "flogo:app",
+  "appModel": "1.1.1",
+  "tags": [],
+  "triggers": [
+    {
+      "ref": "#server",
+      "name": "tibco-flogo-http-trigger",
+      "description": "A simple HTTP server",
+      "settings": {
+        "port": 9173,
+        "processingMode": "Data"
+      },
+      "id": "Webhook_receive",
+      "handlers": [
+        {
+          "description": "",
+          "settings": {
+            "contextPath": "/alerts/flogo",
+            "mode": "Proxy",
+            "reqMethod": "POST"
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:InvestigateErrorAlertFlow"
+            },
+            "input": {
+              "pathParams": "=$.pathParams",
+              "queryParams": "=$.queryParams",
+              "content": "=$.requestBody"
+            },
+            "output": {
+              "statusCode": "=$.statusCode",
+              "headers": "=$.headers",
+              "responseBody": "=$.responseBody",
+              "cookies": {
+                "mapping": {
+                  "@foreach($.cookies,cookies)": {
+                    "=": "$loop"
+                  }
+                }
+              }
+            }
+          },
+          "schemas": {
+            "output": {
+              "proxyData": {
+                "type": "json",
+                "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"title\":\"\",\"type\":\"undefined\"}",
+                "fe_metadata": "\"\""
+              }
+            }
+          },
+          "name": "InvestigateErrorAlertFlow"
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:InvestigateErrorAlertFlow",
+      "data": {
+        "name": "InvestigateErrorAlertFlow",
+        "description": "",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "Log_Alert",
+            "type": "label",
+            "label": "StartActivity to Log_Email"
+          },
+          {
+            "id": 2,
+            "from": "Log_Alert",
+            "to": "AI_Agent",
+            "type": "label",
+            "label": "LogMessage1 to AIAgent_Preview"
+          },
+          {
+            "id": 3,
+            "from": "AI_Agent",
+            "to": "Log_AgentResult",
+            "type": "label",
+            "label": "AIAgent_Preview to LogMessage"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "Log_Alert",
+            "name": "Log_Alert",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=\"Alert Body received: \"+$flow.content.alerts[0]",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "AI_Agent",
+            "name": "AI_Agent",
+            "description": "Configure AI Agent in the flow. This functionality is in preview stage and not recommended for production use.",
+            "activity": {
+              "ref": "#agentactivity",
+              "settings": {
+                "llmProviderConnection": "conn://57b3545b-ba56-4fd7-9489-18fc42791d7b",
+                "model": "gpt-5.5",
+                "reasoning": "",
+                "temperature": 0.7,
+                "enableGuardrails": true,
+                "rateLimit": 25,
+                "tokenLimit": 2048,
+                "redactSensitiveData": false,
+                "responseType": "Text",
+                "agentHandoffs": "",
+                "mcpServers": [
+                  "cf894937-d13a-477c-b36e-780e946a6852",
+                  "1a668885-3db5-4fd7-9197-aad735b9da59"
+                ],
+                "conversationStoreType": "Memory",
+                "memoryMaxSize": 10,
+                "systemPrompt": "You are a helpful assistant"
+              },
+              "input": {
+                "userPrompt": "=\"Perform the following steps to work to an answer: \"+ \r\n\"Step 1: From the received email. Determine the  application name and 'affected DP' data plane name that has produced the error from the\" + coerce.toString($flow.content.alerts[0]) +\r\n\"Step 2: Find the application in the 'Affected DP' data plane and determine the dataplaneid that runs this application. Retrieve the 'application name' from the\" + coerce.toString($flow.content.alerts[0]) +\r\n\"Step 3: Determine via the right tool if the 'applicationId' in the 'dataplaneId'  is a 'FLOGO', 'BWCE' or a 'BW5CE' application type.\" +\r\n\"Step 4: Determine the application runtime status of the faulty application with the 'applicationId'.\" +\r\n\"Step 5: Gather all other application information that can be found using the tools on 'applicationId' and 'data-plane-id' \" +\r\n\"Step 6: Try to find the error in the Observability and trace information of this application with the 'applicationId' and 'data-plane-id' \" +\r\n\"Create a nice overview of all relevant data from the application causing the error notification. Summarize in plain text, show these details in the summary: 'Alert name', 'Alert Description', 'Event Type', 'Value', 'Timestamp', 'Affected DP', 'DataplaneId', 'Capability Type', 'Affected app', 'Runtime Status of the Affected app', 'Alert message'.\"",
+                "conversationId": ""
+              },
+              "schemas": {
+                "output": {
+                  "response": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"strict\":{\"type\":\"boolean\"},\"schema\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"properties\":{\"type\":\"object\",\"properties\":{\"thought\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"}}},\"actions\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"items\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"properties\":{\"type\":\"object\",\"properties\":{\"tool_name\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"}}},\"parameters\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"additionalProperties\":{\"type\":\"boolean\"}}}}},\"required\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"additionalProperties\":{\"type\":\"boolean\"}}}}},\"final_answer\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"}}},\"is_complete\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"}}}}},\"required\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"additionalProperties\":{\"type\":\"boolean\"}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"strict\":{\"type\":\"boolean\"},\"schema\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"properties\":{\"type\":\"object\",\"properties\":{\"thought\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"}}},\"actions\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"items\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"properties\":{\"type\":\"object\",\"properties\":{\"tool_name\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"}}},\"parameters\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"additionalProperties\":{\"type\":\"boolean\"}}}}},\"required\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"additionalProperties\":{\"type\":\"boolean\"}}}}},\"final_answer\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"}}},\"is_complete\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"}}}}},\"required\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"additionalProperties\":{\"type\":\"boolean\"}}}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Log_AgentResult",
+            "name": "Log_AgentResult",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=\"Email Received\"+ $activity[AI_Agent].response",
+                "logLevel": ""
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjM0LCJ5IjoxNDZ9LCJMb2dfQWxlcnQiOnsieCI6MTk3LCJ5IjoxMzV9LCJBSV9BZ2VudCI6eyJ4Ijo0MTAsInkiOjEzNX0sIkxvZ19BZ2VudFJlc3VsdCI6eyJ4Ijo2MzcsInkiOjEzM319",
+        "metadata": {
+          "input": [
+            {
+              "name": "pathParams",
+              "type": "params"
+            },
+            {
+              "name": "queryParams",
+              "type": "params"
+            },
+            {
+              "name": "headers",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Sec-Websocket-Key\":{\"type\":\"string\",\"visible\":false},\"Sec-Websocket-Version\":{\"type\":\"string\",\"visible\":false},\"Upgrade\":{\"type\":\"string\",\"visible\":false}}"
+              }
+            },
+            {
+              "name": "content",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"version\":{\"type\":\"string\"},\"subscriptionId\":{\"type\":\"string\"},\"region\":{\"type\":\"string\"},\"alertCount\":{\"type\":\"number\"},\"truncated\":{\"type\":\"boolean\"},\"alerts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"status\":{\"type\":\"string\"},\"labels\":{\"type\":\"object\",\"properties\":{\"app_id\":{\"type\":\"string\"},\"app_name\":{\"type\":\"string\"},\"app_namespace\":{\"type\":\"string\"},\"app_type\":{\"type\":\"string\"},\"app_version\":{\"type\":\"string\"},\"k8s_pod_name\":{\"type\":\"string\"},\"k8s_pod_start_time\":{\"type\":\"string\"},\"workload_type\":{\"type\":\"string\"},\"x_tibco_rule_id\":{\"type\":\"string\"}}},\"severity\":{\"type\":\"string\"},\"alertName\":{\"type\":\"string\"},\"alertDescription\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"},\"eventType\":{\"type\":\"string\"},\"alertRule\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"affectedDP\":{\"type\":\"string\"},\"alertMessage\":{\"type\":\"string\"},\"cpSubscriptionURL\":{\"type\":\"string\"}}}}}"
+              }
+            },
+            {
+              "name": "wsconnection",
+              "type": "any"
+            }
+          ],
+          "output": [],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"WebsocketServer\",\"properties\":{\"pathParams\":{\"type\":\"params\"},\"queryParams\":{\"type\":\"params\"},\"headers\":{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Sec-Websocket-Key\":{\"type\":\"string\",\"visible\":false},\"Sec-Websocket-Version\":{\"type\":\"string\",\"visible\":false},\"Upgrade\":{\"type\":\"string\",\"visible\":false}},\"required\":[]},\"content\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"version\":{\"type\":\"string\"},\"subscriptionId\":{\"type\":\"string\"},\"region\":{\"type\":\"string\"},\"alertCount\":{\"type\":\"number\"},\"truncated\":{\"type\":\"boolean\"},\"alerts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"status\":{\"type\":\"string\"},\"labels\":{\"type\":\"object\",\"properties\":{\"app_id\":{\"type\":\"string\"},\"app_name\":{\"type\":\"string\"},\"app_namespace\":{\"type\":\"string\"},\"app_type\":{\"type\":\"string\"},\"app_version\":{\"type\":\"string\"},\"k8s_pod_name\":{\"type\":\"string\"},\"k8s_pod_start_time\":{\"type\":\"string\"},\"workload_type\":{\"type\":\"string\"},\"x_tibco_rule_id\":{\"type\":\"string\"}}},\"severity\":{\"type\":\"string\"},\"alertName\":{\"type\":\"string\"},\"alertDescription\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"},\"eventType\":{\"type\":\"string\"},\"alertRule\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"affectedDP\":{\"type\":\"string\"},\"alertMessage\":{\"type\":\"string\"},\"cpSubscriptionURL\":{\"type\":\"string\"}}}}}},\"wsconnection\":{\"type\":\"any\",\"required\":false}}}"
+          }
+        }
+      }
+    }
+  ],
+  "properties": [
+    {
+      "name": "AgenticAI.OpenAI.LLM_Provider",
+      "type": "string",
+      "value": "OpenAI"
+    },
+    {
+      "name": "AgenticAI.OpenAI.API_Key",
+      "type": "string",
+      "value": "SECRET:YOURKEY"
+    },
+    {
+      "name": "AgenticAI.OpenAI.LLM_Base_URL",
+      "type": "string",
+      "value": "https://api.openai.com/v1"
+    }
+  ],
+  "connections": {
+    "57b3545b-ba56-4fd7-9489-18fc42791d7b": {
+      "id": "57b3545b-ba56-4fd7-9489-18fc42791d7b",
+      "name": "OpenAI",
+      "ref": "#llmprovider",
+      "isGlobal": false,
+      "settings": {
+        "name": "OpenAI",
+        "description": "OpenAI",
+        "llmProvider": "=$property[\"AgenticAI.OpenAI.LLM_Provider\"]",
+        "anthropicProvider": "Default",
+        "apiKey": "=$property[\"AgenticAI.OpenAI.API_Key\"]",
+        "llmProviderUrl": "=$property[\"AgenticAI.OpenAI.LLM_Base_URL\"]"
+      }
+    },
+    "d805e88b-f8ac-4f11-9711-da5bcc2180ba": {
+      "id": "d805e88b-f8ac-4f11-9711-da5bcc2180ba",
+      "name": "Claude",
+      "ref": "#llmprovider",
+      "isGlobal": false,
+      "settings": {
+        "name": "Claude",
+        "description": "Claude Connection",
+        "llmProvider": "Anthropic",
+        "anthropicProvider": "Default",
+        "apiKey": "SECRET:YOURKEY",
+        "llmProviderUrl": "https://api.anthropic.com"
+      }
+    },
+    "cf894937-d13a-477c-b36e-780e946a6852": {
+      "id": "cf894937-d13a-477c-b36e-780e946a6852",
+      "name": "ControlPlaneMcp",
+      "ref": "#mcpserverconfig",
+      "isGlobal": false,
+      "settings": {
+        "name": "ControlPlaneMcp",
+        "description": "",
+        "serverType": "http",
+        "serverUrl": "https://tibcoatseuwe1.eu-west.my.tibco.com/cp/mcp",
+        "httpTransportType": "streamable",
+        "authType": "Token",
+        "authToken": "SECRET:YOURKEY",
+        "selectedTools": [
+          "createActivationServer",
+          "createAlertRule",
+          "createAndRegisterNameSpace",
+          "createBWAgent",
+          "createEmailReceiver",
+          "createIngressController",
+          "createStorageClass",
+          "deleteCapabilityInstanceInsideDataPlane",
+          "deleteDataPlane",
+          "deleteResourceInstance",
+          "linkResourceInstancesToDataPlane",
+          "listApps",
+          "listCapabilityInstances",
+          "listDataplanes",
+          "listResourceInstances",
+          "provisionCapabilityBW5CE",
+          "provisionCapabilityBWCE",
+          "provisionCapabilityTIBCOHUB",
+          "updateDataPlane",
+          "updateEmailReceiver",
+          "createHawkDomainRV"
+        ]
+      }
+    },
+    "1a668885-3db5-4fd7-9197-aad735b9da59": {
+      "id": "1a668885-3db5-4fd7-9197-aad735b9da59",
+      "name": "Flogo_MCP",
+      "ref": "#mcpserverconfig",
+      "isGlobal": false,
+      "settings": {
+        "name": "Flogo_MCP",
+        "description": "",
+        "serverType": "http",
+        "serverUrl": "https://tibcoatseuwe1.eu-west.my.tibco.com/flogo/mcp",
+        "httpTransportType": "streamable",
+        "authType": "Token",
+        "authToken": "SECRET:YOURKEY",
+        "selectedTools": [
+          "flogo_get_app_details",
+          "flogo_get_app_endpoints",
+          "flogo_get_app_instances",
+          "flogo_get_apps_deployed_for_build",
+          "flogo_get_capability_info",
+          "flogo_get_provisioned_flogo_versions",
+          "flogo_list_app_builds",
+          "flogo_list_connectors",
+          "flogo_list_connectors_from_controlplane",
+          "flogo_list_namespaces",
+          "flogo_list_supplements",
+          "flogo_list_versions_from_control_plane",
+          "flogo_provision_connector",
+          "flogo_provision_flogo_version",
+          "flogo_get_all_capability_summary"
+        ]
+      }
+    }
+  },
+  "contrib": "W3sicmVmIjoiZ2l0aHViLmNvbS90aWJjby93aS1wbHVnaW5zL2NvbnRyaWJ1dGlvbnMvaHR0cC9zcmMvYXBwL0hUVFAiLCJpZCI6IkhUVFAiLCJ2ZXJzaW9uIjoiMS4xLjEiLCJ0YWciOiIxLjEuMS1iMDMiLCJuYW1lIjoiSFRUUCIsInMzbG9jYXRpb24iOiJUaWJjby9IVFRQIiwiaXNVc2VyRXh0ZW5zaW9uIjpmYWxzZX0seyJyZWYiOiJnaXRodWIuY29tL3RpYmNvL2Zsb2dvLWdlbmVyYWwvc3JjL2FwcC9HZW5lcmFsIiwiaWQiOiJHZW5lcmFsIiwidmVyc2lvbiI6IjEuNi4xMyIsInRhZyI6IjEuNi4xMy1iMDMiLCJuYW1lIjoiR2VuZXJhbCIsInMzbG9jYXRpb24iOiJUaWJjby9HZW5lcmFsIiwiaXNVc2VyRXh0ZW5zaW9uIjpmYWxzZX0seyJyZWYiOiJnaXRodWIuY29tL3RpYmNvL2Zsb2dvLWFpLWFnZW50L3NyYy9hcHAvQWdlbnRpY0FJIiwiaWQiOiJBZ2VudGljQUkiLCJ2ZXJzaW9uIjoiMC45LjEiLCJ0YWciOiIwLjkuMS1iMDIiLCJuYW1lIjoiQWdlbnRpYyBBSSAoVGVjaCBQcmV2aWV3KSIsInMzbG9jYXRpb24iOiJUaWJjby9BZ2VudGljQUkiLCJpc1VzZXJFeHRlbnNpb24iOmZhbHNlfV0=",
+  "metadata": {
+    "endpoints": [
+      {
+        "protocol": "http",
+        "port": "9173",
+        "title": "Webhook_receive",
+        "type": "public"
+      }
+    ],
+    "flogoVersion": "2.26.3"
+  }
+}
