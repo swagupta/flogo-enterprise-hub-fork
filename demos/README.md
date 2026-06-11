@@ -8,6 +8,7 @@ End-to-end proof-of-concept demonstrations showcasing **TIBCO Flogo®** as a **l
 
 | Demo | Category | Description |
 |------|----------|-------------|
+| [Agent AI - Platform Error Alert Agent](./flogo-ai-alert-agent/) | AI & MCP | Flogo Agentic AI scenario consuming Platform MCP servers and Platform Alerts |
 | [AI-Powered Customer Service](./ai-powered-customer-service/) | AI & MCP | MCP server integrating CRM, order management, and notifications for AI agents (Claude Desktop, Cursor, VS Code) |
 | [AI-Powered MFT](./flogo-mcp-mft/) | AI & MCP | MCP server for TIBCO Managed File Transfer — AI-powered B2B file transfer, user management, and audit trails |
 | [GraphQL](./flogo-graphql/) | Integration | GraphQL trigger with MongoDB resolvers for device data queries, with Docker Compose deployment |
