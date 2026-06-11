@@ -84,7 +84,7 @@
             "handlerName": "delete_user",
             "handlerDescription": "Delete and deprovision a user account from all enterprise systems. Revokes all access, removes group memberships, and archives user data per retention policy. Requires manager or HR approval confirmation.",
             "readOnlyToolHint": false,
-            "destructiveToolHint": false,
+            "destructiveToolHint": true,
             "idempotentToolHint": false,
             "openWorldToolHint": true
           },
@@ -209,7 +209,7 @@
             "resourceUri": "",
             "handlerName": "get_user_profile",
             "handlerDescription": "Retrieve detailed profile information for a user including personal details, department, manager, hire date, office location, and contact information.",
-            "readOnlyToolHint": false,
+            "readOnlyToolHint": true,
             "destructiveToolHint": false,
             "idempotentToolHint": false,
             "openWorldToolHint": true

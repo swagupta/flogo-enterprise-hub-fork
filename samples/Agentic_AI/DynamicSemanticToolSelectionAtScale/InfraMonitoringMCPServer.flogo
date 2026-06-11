@@ -41,7 +41,7 @@
             "resourceUri": "",
             "handlerName": "get_server_metrics",
             "handlerDescription": "Get real-time CPU, memory, disk, and network utilization metrics for a specified server. Returns current values, averages, and threshold status for alerting.",
-            "readOnlyToolHint": false,
+            "readOnlyToolHint": true,
             "destructiveToolHint": false,
             "idempotentToolHint": false,
             "openWorldToolHint": true

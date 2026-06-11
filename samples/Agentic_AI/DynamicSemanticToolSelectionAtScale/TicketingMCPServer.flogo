@@ -41,7 +41,7 @@
             "resourceUri": "",
             "handlerName": "get_ticket_status",
             "handlerDescription": "Get the current status and full details of a support ticket including title, description, priority, assignee, category, SLA status, and all updates.",
-            "readOnlyToolHint": false,
+            "readOnlyToolHint": true,
             "destructiveToolHint": false,
             "idempotentToolHint": false,
             "openWorldToolHint": true
