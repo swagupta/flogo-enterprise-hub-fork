@@ -79,8 +79,8 @@
             "output": {
               "headers": {
                 "type": "json",
-                "value": "{\"type\":\"object\",\"properties\":{\"jwt_token\":{\"type\":\"string\"},\"Accept\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false}},\"required\":[\"jwt_token\"]}",
-                "fe_metadata": "[{\"parameterName\":\"jwt_token\",\"type\":\"string\",\"repeating\":\"\",\"required\":\"true\"},{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
               },
               "body": {
                 "type": "json",
@@ -235,7 +235,7 @@
               "type": "object",
               "schema": {
                 "type": "json",
-                "value": "{\"jwt_token\":{\"type\":\"string\"},\"Accept\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false}}"
+                "value": "{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false}}"
               }
             },
             {
@@ -270,7 +270,7 @@
             }
           ],
           "fe_metadata": {
-            "input": "{\"type\":\"object\",\"title\":\"ReceiveHTTPMessage\",\"properties\":{\"headers\":{\"type\":\"object\",\"properties\":{\"jwt_token\":{\"type\":\"string\"},\"Accept\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false}},\"required\":[\"jwt_token\"]},\"body\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"policy_number\":{\"type\":\"string\"},\"claim_type\":{\"type\":\"string\"},\"claim_amount\":{\"type\":\"number\"},\"incident_description\":{\"type\":\"string\"},\"incident_date\":{\"type\":\"string\"}}},\"requestURI\":{\"type\":\"string\",\"required\":false},\"method\":{\"type\":\"string\",\"required\":false}}}",
+            "input": "{\"type\":\"object\",\"title\":\"ReceiveHTTPMessage\",\"properties\":{\"headers\":{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false}},\"required\":[]},\"body\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"policy_number\":{\"type\":\"string\"},\"claim_type\":{\"type\":\"string\"},\"claim_amount\":{\"type\":\"number\"},\"incident_description\":{\"type\":\"string\"},\"incident_date\":{\"type\":\"string\"}}},\"requestURI\":{\"type\":\"string\",\"required\":false},\"method\":{\"type\":\"string\",\"required\":false}}}",
             "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"code\":{\"type\":\"integer\"},\"data\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"result\":{\"type\":\"object\",\"properties\":{}}}}},\"required\":[]}"
           }
         },
@@ -297,22 +297,12 @@
     {
       "name": "LLMClient.openai.API_Key",
       "type": "string",
-      "value": "SECRET:s7ZOBR94HdaEs70sEZgZVe/TOw=="
+      "value": "SECRET:9vqDUf5dcU3aJZkBw+NBgdNFIw=="
     },
     {
       "name": "LLMClient.openai.LLM_Model",
       "type": "string",
       "value": "gpt-4o"
-    },
-    {
-      "name": "LLMClient.MCP.Policy.Server_Name",
-      "type": "string",
-      "value": "PolicyLookup"
-    },
-    {
-      "name": "LLMClient.MCP.Policy.Server_URL",
-      "type": "string",
-      "value": "http://localhost:9603/mcp"
     },
     {
       "name": "LLMClient.A2A.Fraud.Server_Name",
@@ -327,12 +317,7 @@
     {
       "name": "LLMClient.A2A.Fraud.Auth_Token",
       "type": "string",
-      "value": "SECRET:liqGq2mYSb1VGi6xRTvOL1w8dg=="
-    },
-    {
-      "name": "LLMClient.MCP.Policy.JWT_Token",
-      "type": "string",
-      "value": "SECRET:pFmNMDD0TBxGiyo5CKYDOnW9cA=="
+      "value": "SECRET:u2iXyKvnIzpqnDbCv3DC58lYNXBofbU="
     }
   ],
   "connections": {
@@ -347,7 +332,7 @@
         "serverType": "http",
         "serverUrl": "http://localhost:9603/mcp",
         "httpTransportType": "streamable",
-        "authType": "Token",
+        "authType": "None",
         "authToken": "",
         "selectedTools": ""
       }
@@ -362,7 +347,7 @@
         "description": "FraudDetection A2A Server",
         "serverUrl": "http://localhost:9604",
         "authType": "Static Token",
-        "authToken": ""
+        "authToken": "SECRET:QeFIxlNRRHdRA5UXUlkiPDPLkgOg+a0="
       }
     }
   },
@@ -390,13 +375,6 @@
                 "summary": "process_claim_flow",
                 "operationId": "post_process-claim",
                 "parameters": [
-                  {
-                    "name": "jwt_token",
-                    "in": "header",
-                    "description": "Request parameter",
-                    "required": true,
-                    "type": "string"
-                  },
                   {
                     "name": "body",
                     "in": "body",

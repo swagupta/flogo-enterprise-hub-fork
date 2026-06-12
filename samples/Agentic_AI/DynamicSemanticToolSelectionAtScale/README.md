@@ -6,7 +6,7 @@ This sample demonstrates **dynamic semantic tool selection at scale** using the 
 
 The architecture uses a **two-step pattern**:
 
-1. **Step 1 — Tool Selection** (`LLMClient Activity`): Has a text catalog of all 150 tool names embedded in its system prompt. Analyzes the request and returns a JSON array of relevant tool names (typically 1–5). No MCP connections — pure text-based selection that bypasses API tool-count limits.
+1. **Step 1 — Tool Selection** (`LLMClient Activity`): Has a text catalog of all 150 tool names embedded in its system prompt. Analyzes the request and returns a JSON object with a `tools` array of relevant tool names (typically 1–5). No MCP connections — pure text-based selection that bypasses API tool-count limits.
 2. **Step 2 — Execution** (`AI Agent Activity`): Receives the filtered tool names via `filteredToolNames` and connects to all 3 MCP Servers, but only loads and executes the selected tools.
 
 This keeps the execution agent's context focused and cost-efficient, even as the total tool catalog grows.
@@ -32,7 +32,7 @@ Alex submits:
 
 Step 1 — Tool Selection (LLMClient):
   [Reads 150 tool names from text catalog in system prompt]
-  → ["reset_password", "unlock_account", "create_ticket"]
+  → {"tools": ["reset_password", "unlock_account", "create_ticket"]}
 
 Step 2 — Execution (AI Agent with 3 filtered tools):
   [Calls reset_password → IdentityAccessMCPServer]
@@ -73,11 +73,11 @@ Step 2 — Execution (AI Agent with 3 filtered tools):
  |  |   userPrompt: employee_id + request text                     |      |
  |  |   No MCP connections — pure text-based selection             |      |
  |  |   LLM: OpenAI gpt-4o, temp 0.3                              |      |
- |  |   Output: ["reset_password", "unlock_account", ...]          |      |
+ |  |   Output: {"tools": ["reset_password", "unlock_account",...]} |      |
  |  +-----------------------------+--------------------------------+      |
  |                                |                                        |
- |              $activity[ProcessRequest].response                        |
- |              (JSON array of tool name strings)                         |
+ |              $activity[ProcessRequest].response.tools                  |
+ |              (JSON object with tools array of tool name strings)       |
  |                                |                                        |
  |  +-----------------------------v--------------------------------+      |
  |  | Step 2: ProcessAIAgent (AI Agent Activity)                    |      |
@@ -85,8 +85,7 @@ Step 2 — Execution (AI Agent with 3 filtered tools):
  |  |   filteredToolNames: ← tool names from Step 1               |      |
  |  |   mcpServers: [IAM, Infra, Ticketing] — same 3 connections  |------+---> Only selected tools
  |  |   LLM: OpenAI gpt-4o, temp 0.7 (via LLM Provider Conn)     |      |     are loaded & called
- |  |   conversationStore: Memory (size 10)                        |      |
- |  |   conversationId: employee_id                                |      |
+ |  |   conversationStore: None                                    |      |
  |  +-----------------------------+--------------------------------+      |
  |                                |                                        |
  |  +-----------------------------v--------------------------------+      |
@@ -152,16 +151,16 @@ Sending 150 tool definitions to an LLM in every request is expensive, degrades r
     "output": {
       "responseJSONSchema": {
         "type": "json",
-        "value": "{\"type\":\"array\",\"items\":{\"type\":\"string\"}}"
+        "value": "{\"type\":\"object\",\"properties\":{\"tools\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"tools\"],\"additionalProperties\":false}"
       }
     }
   }
 }
 ```
 
-The `responseType: "JSON"` with `responseJSONSchema` (under `schemas.output`) ensures the LLM returns a validated JSON array of strings, which maps directly to the `filteredToolNames` input on the Agent Activity.
+The `responseType: "JSON"` with `responseJSONSchema` (under `schemas.output`) ensures the LLM returns a validated JSON object containing a `tools` array.
 
-Output: `["reset_password", "unlock_account", "create_ticket"]`
+Output: `{"tools": ["reset_password", "unlock_account", "create_ticket"]}`
 
 **Step 2 — AI Agent (executor):** Receives the tool names via the `filteredToolNames` input. The Agent Activity only loads and exposes those specific tools to the LLM, keeping the context small and focused.
 
@@ -175,7 +174,7 @@ Output: `["reset_password", "unlock_account", "create_ticket"]`
   "input": {
     "userPrompt": "=string.concat(\"Employee ID: \", ..., \"\\nRequest: \", ...)",
     "conversationId": "=$flow.body.employee_id",
-    "filteredToolNames": "=$activity[ProcessRequest].response"
+    "filteredToolNames": "=$activity[ProcessRequest].response.tools"
   }
 }
 ```
@@ -382,6 +381,6 @@ curl -X POST http://localhost:9195/service-request \
 3. **Tune the tool selector prompt** — adjust `LLMClient.systemPrompt` based on observed selection accuracy
 4. **Add more tool domains** — create additional MCP Servers (e.g., HR, Finance, Facilities) and add them to the orchestrator's connection list
 5. **Use a cheaper model for Step 1** — tool selection is a simpler task; consider using `gpt-4o-mini` for the LLMClient step while keeping `gpt-4o` for the Agent step
-6. **Add conversation memory** — the Agent Activity already uses in-memory conversation store keyed by `employee_id`, enabling multi-turn follow-ups per employee
+6. **Add conversation memory** — change `conversationStoreType` to `Memory` on the Agent Activity and use `employee_id` as the `conversationId` to enable multi-turn follow-ups per employee
 
 See the [Insurance Claims Processor](../InsuranceClaimsProcessor/) sample for the LLM Client Activity chaining pattern, and the [Mobile Customer Care Multi-Agent](../Mobile-Customer-Care-Multi-Agent/) sample for multi-agent handoff architecture.

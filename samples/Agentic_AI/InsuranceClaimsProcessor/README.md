@@ -15,7 +15,7 @@ This architecture shows how to use the **LLM Client Activity** for lightweight, 
 | **LLM Client + MCP** | `InsuranceClaimsProcessor.flogo` | LLM Client Activity calling MCP tools for policy lookup |
 | **LLM Client + A2A** | `InsuranceClaimsProcessor.flogo` | LLM Client Activity delegating to a remote A2A agent for fraud detection |
 | **Sequential chaining** | `InsuranceClaimsProcessor.flogo` | Output of LLMClient step 1 feeds into the prompt of LLMClient step 2 |
-| **MCP Server** | `PolicyLookupMCPServer.flogo` | Stateless MCP Server with JWT Token auth and tool annotations |
+| **MCP Server** | `PolicyLookupMCPServer.flogo` | Stateless MCP Server with tool annotations |
 | **A2A Server** | `FraudDetectionA2A.flogo` | Agent Trigger with `agentType: "A2A Server"`, PII redaction, conversation memory |
 
 ---
@@ -115,7 +115,7 @@ System (Step 2 — Fraud Assessment via A2A):
 | File | Description |
 |---|---|
 | `InsuranceClaimsProcessor.flogo` | **Orchestrator** — REST API on port 9194 with two chained LLM Client Activity calls. Step 1 verifies policy via MCP, Step 2 assesses fraud via A2A. Returns a final APPROVE/REVIEW/DENY recommendation. |
-| `PolicyLookupMCPServer.flogo` | **MCP Server** — Stateless MCP Server on port 9603 with JWT Token auth. Exposes two read-only tools (`lookup_policy`, `check_coverage`) with realistic mock data for a Comprehensive Auto policy. |
+| `PolicyLookupMCPServer.flogo` | **MCP Server** — Stateless MCP Server on port 9603. Exposes two read-only tools (`lookup_policy`, `check_coverage`) with realistic mock data for a Comprehensive Auto policy. |
 | `FraudDetectionA2A.flogo` | **A2A Server** — Fraud detection agent on port 9604 with Static Token auth, PII redaction enabled. Exposes two tools (`AnalyzeClaimPatterns`, `CalculateRiskScore`) with multi-dimensional fraud scoring mock data. |
 
 ---
@@ -255,12 +255,7 @@ Both tools are annotated with `readOnlyToolHint: true` to signal they do not mod
 
 ### Step 1 — Configure and Start the MCP Server
 
-Open `PolicyLookupMCPServer.flogo` in the Flogo VS Code extension. In the **App Properties**, configure the JWT secret if needed:
-
-```
-FlogoMcpServer.PORT       = 9603
-FlogoMcpServer.JWT_Secret = (your JWT secret)
-```
+Open `PolicyLookupMCPServer.flogo` in the Flogo VS Code extension. The default port is **9603** (configurable via `FlogoMcpServer.PORT` in App Properties).
 
 Run `PolicyLookupMCPServer.flogo`. This starts the MCP Server on port **9603** at endpoint `/mcp`.
 
@@ -289,10 +284,8 @@ Open `InsuranceClaimsProcessor.flogo`. In the **App Properties**, set:
 LLMClient.openai.API_Key      = sk-your-key-here
 LLMClient.openai.LLM_Model    = gpt-4o
 LLMClient.openai.LLM_Provider = OpenAI
-LLMClient.MCP.Policy.Server_URL = http://localhost:9603/mcp
 LLMClient.A2A.Fraud.Server_URL  = http://localhost:9604
 LLMClient.A2A.Fraud.Auth_Token  = (same token configured on the A2A Server)
-LLMClient.MCP.Policy.JWT_Token  = (JWT token matching the MCP Server's secret)
 ```
 
 Run `InsuranceClaimsProcessor.flogo`. This starts the REST API on port **9194**.
@@ -303,7 +296,6 @@ Run `InsuranceClaimsProcessor.flogo`. This starts the REST API on port **9194**.
 ```bash
 curl -X POST http://localhost:9194/process-claim \
   -H "Content-Type: application/json" \
-  -H "jwt_token: your-jwt-token" \
   -d '{
     "policy_number": "POL-2026-001234",
     "claim_type": "collision",
@@ -313,7 +305,7 @@ curl -X POST http://localhost:9194/process-claim \
   }'
 ```
 
-**Postman**: Create a POST request to `http://localhost:9194/process-claim` with the JSON body above and a `jwt_token` header.
+**Postman**: Create a POST request to `http://localhost:9194/process-claim` with the JSON body above.
 
 ---
 
@@ -394,7 +386,7 @@ curl -X POST http://localhost:9194/process-claim \
 ## Extending to Production
 
 1. **Replace mock data** in each tool flow's `actreturn` with live API calls to your policy management system, underwriting engine, and fraud detection service
-2. **Add authentication** to the REST endpoint — the `jwt_token` header is already wired; connect it to your identity provider
+2. **Add authentication** to the REST endpoint and MCP Server — configure JWT or Token auth on the REST trigger, MCP Server trigger, and MCP Server connection
 3. **Add a compliance review step** — insert a third LLM Client Activity that checks the claim against regulatory requirements before final decision
 4. **Connect the A2A Server to real fraud models** — integrate with SAS Fraud Management, FICO Falcon, or custom ML pipelines
 5. **Add logging and audit trails** — insert Flogo logging activities between steps to create a reviewable decision record

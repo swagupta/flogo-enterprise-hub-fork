@@ -27,8 +27,8 @@
         "enableTLS": false,
         "serverCertificate": "",
         "serverPrivateKey": "",
-        "authType": "JWT Token",
-        "authToken": "=$property[\"FlogoMcpServer.JWT_Secret\"]"
+        "authType": "None",
+        "authToken": ""
       },
       "id": "PolicyLookupMCPServer",
       "handlers": [
@@ -109,8 +109,7 @@
               "tokenInfo": "=$.tokenInfo"
             },
             "output": {
-              "response": "=$.response",
-              "structuredContent": "=$.structuredContent"
+              "response": "=$.response"
             }
           },
           "schemas": {
@@ -233,14 +232,6 @@
                 "type": "json",
                 "value": "{\"Authorization\":{\"type\":\"string\"}}"
               }
-            },
-            {
-              "name": "tokenInfo",
-              "type": "object",
-              "schema": {
-                "type": "json",
-                "value": "{\"scopes\":{\"type\":\"array\",\"items\":[{\"type\":\"string\"}]},\"expiration\":{\"type\":\"number\"}}"
-              }
             }
           ],
           "output": [
@@ -254,7 +245,7 @@
             }
           ],
           "fe_metadata": {
-            "input": "{\"type\":\"object\",\"title\":\"PolicyLookupMCPServer\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"policy_number\":{\"type\":\"string\",\"description\":\"The insurance policy number (e.g. POL-2026-001234)\"}},\"required\":[\"policy_number\"],\"additionalProperties\":false},\"httpHeaders\":{\"type\":\"object\",\"properties\":{\"Authorization\":{\"type\":\"string\"}}},\"tokenInfo\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"scopes\":{\"type\":\"array\",\"items\":[{\"type\":\"string\"}]},\"expiration\":{\"type\":\"number\"}}}}}",
+            "input": "{\"type\":\"object\",\"title\":\"PolicyLookupMCPServer\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"policy_number\":{\"type\":\"string\",\"description\":\"The insurance policy number (e.g. POL-2026-001234)\"}},\"required\":[\"policy_number\"],\"additionalProperties\":false},\"httpHeaders\":{\"type\":\"object\",\"properties\":{\"Authorization\":{\"type\":\"string\"}}}}}",
             "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"response\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}}},\"required\":[\"response\"]}"
           }
         }
@@ -322,7 +313,7 @@
             }
           }
         ],
-        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjUwLCJ5Ijo1MH0sIlJldHVybiI6eyJ4IjoyNTAsInkiOjE1MH19",
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjUwLCJ5Ijo1MH0sIlJldHVybiI6eyJ4IjoyNTEsInkiOjUxfX0=",
         "metadata": {
           "input": [
             {
@@ -340,14 +331,6 @@
                 "type": "json",
                 "value": "{\"Authorization\":{\"type\":\"string\"}}"
               }
-            },
-            {
-              "name": "tokenInfo",
-              "type": "object",
-              "schema": {
-                "type": "json",
-                "value": "{\"scopes\":{\"type\":\"array\",\"items\":[{\"type\":\"string\"}]},\"expiration\":{\"type\":\"number\"}}"
-              }
             }
           ],
           "output": [
@@ -361,7 +344,7 @@
             }
           ],
           "fe_metadata": {
-            "input": "{\"type\":\"object\",\"title\":\"PolicyLookupMCPServer\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"policy_number\":{\"type\":\"string\",\"description\":\"The insurance policy number\"},\"claim_type\":{\"type\":\"string\",\"description\":\"Type of claim to check coverage for (e.g. collision, theft, medical, property_damage, liability, natural_disaster)\"}},\"required\":[\"policy_number\",\"claim_type\"],\"additionalProperties\":false},\"httpHeaders\":{\"type\":\"object\",\"properties\":{\"Authorization\":{\"type\":\"string\"}}},\"tokenInfo\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"scopes\":{\"type\":\"array\",\"items\":[{\"type\":\"string\"}]},\"expiration\":{\"type\":\"number\"}}}}}",
+            "input": "{\"type\":\"object\",\"title\":\"PolicyLookupMCPServer\",\"properties\":{\"arguments\":{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"policy_number\":{\"type\":\"string\",\"description\":\"The insurance policy number\"},\"claim_type\":{\"type\":\"string\",\"description\":\"Type of claim to check coverage for (e.g. collision, theft, medical, property_damage, liability, natural_disaster)\"}},\"required\":[\"policy_number\",\"claim_type\"],\"additionalProperties\":false},\"httpHeaders\":{\"type\":\"object\",\"properties\":{\"Authorization\":{\"type\":\"string\"}}}}}",
             "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"response\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"error\":{\"type\":\"string\"}}}},\"required\":[\"response\"]}"
           }
         }
@@ -373,11 +356,6 @@
       "name": "FlogoMcpServer.PORT",
       "type": "string",
       "value": "9603"
-    },
-    {
-      "name": "FlogoMcpServer.JWT_Secret",
-      "type": "string",
-      "value": "SECRET:W6nqAM4BOLCJFl6eqNe3E+5vgA=="
     }
   ],
   "connections": {},

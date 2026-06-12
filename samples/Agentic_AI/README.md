@@ -85,7 +85,7 @@ An intelligent incident triage system that watches an integration middleware err
 
 An insurance claims processing pipeline demonstrating the **LLM Client Activity** — a lightweight, stateless alternative to the AI Agent Activity for one-shot LLM inference. A REST API chains two LLM Client Activity calls: step 1 verifies policy coverage via an MCP Server, step 2 assesses fraud risk via an A2A Server agent, and the combined results produce an APPROVE/REVIEW/DENY recommendation. Three independent Flogo apps collaborate: orchestrator, policy MCP server, and fraud detection A2A agent.
 
-**Highlights**: LLM Client Activity with dynamic LLM configuration (no pre-configured connection) · MCP Server integration for policy lookup and coverage check · A2A Server for fraud pattern analysis and risk scoring · Sequential chaining (`$activity[LookupPolicy].response` feeds Step 2) · PII redaction on the A2A agent · Stateless MCP server with JWT Token auth and tool annotations · Multi-dimensional fraud scoring with composite risk score
+**Highlights**: LLM Client Activity with dynamic LLM configuration (no pre-configured connection) · MCP Server integration for policy lookup and coverage check · A2A Server for fraud pattern analysis and risk scoring · Sequential chaining (`$activity[LookupPolicy].response` feeds Step 2) · PII redaction on the A2A agent · Stateless MCP server with tool annotations · Multi-dimensional fraud scoring with composite risk score
 
 ---
 
